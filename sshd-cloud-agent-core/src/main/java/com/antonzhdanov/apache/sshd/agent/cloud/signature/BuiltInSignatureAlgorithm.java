@@ -5,6 +5,8 @@ import static java.util.Objects.requireNonNull;
 public enum BuiltInSignatureAlgorithm implements SignatureAlgorithm {
     RSA_SHA256("rsa-sha2-256"),
     RSA_SHA512("rsa-sha2-512"),
+    ECDSA_SHA_256("ecdsa-sha2-nistp256"),
+    ECDSA_SHA_384("ecdsa-sha2-nistp384"),
     ;
 
     private final String knownAlgorithm;

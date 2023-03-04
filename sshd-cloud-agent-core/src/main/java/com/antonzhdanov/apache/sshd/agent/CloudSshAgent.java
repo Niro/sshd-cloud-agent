@@ -11,11 +11,17 @@ import org.apache.sshd.agent.SshAgent;
 import org.apache.sshd.agent.SshAgentKeyConstraint;
 import org.apache.sshd.common.SshException;
 import org.apache.sshd.common.session.SessionContext;
+import org.apache.sshd.common.util.buffer.Buffer;
+import org.apache.sshd.common.util.buffer.ByteArrayBuffer;
+import org.apache.sshd.common.util.io.der.DERParser;
 import org.apache.sshd.common.util.logging.AbstractLoggingBean;
 
 import java.io.IOException;
+import java.io.StreamCorruptedException;
+import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.PublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -69,6 +75,10 @@ public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean i
 
             byte[] signature = signer.sign(data, cloudPublicKey.getCloudKeyInfo(), signatureAlgorithm);
 
+            if (cloudPublicKey instanceof ECPublicKey) {
+                signature = postProcessEcSignature(signature);
+            }
+
             return new SignatureWithAlgorithm(signature, algo);
         } catch (Exception exc) {
             throw new CloudSshAgentException("Signature error", exc);
@@ -111,6 +121,37 @@ public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean i
                     }
                 }
             }
+        }
+    }
+
+    private byte[] postProcessEcSignature(byte[] sig) throws IOException {
+        try (DERParser parser = new DERParser(sig)) {
+            int type = parser.read();
+            if (type != 0x30) {
+                throw new StreamCorruptedException(
+                        "Invalid signature format - not a DER SEQUENCE: 0x" + Integer.toHexString(type));
+            }
+
+            // length of remaining encoding of the 2 integers
+            int remainLen = parser.readLength();
+            /*
+             * There are supposed to be 2 INTEGERs, each encoded with:
+             *
+             * - one byte representing the fact that it is an INTEGER - one byte of the integer encoding length - at
+             * least one byte of integer data (zero length is not an option)
+             */
+            if (remainLen < (2 * 3)) {
+                throw new StreamCorruptedException("Invalid signature format - not enough encoded data length: " + remainLen);
+            }
+
+            BigInteger r = parser.readBigInteger();
+            BigInteger s = parser.readBigInteger();
+            // Write the <r,s> to its own types writer.
+            Buffer rsBuf = new ByteArrayBuffer();
+            rsBuf.putMPInt(r);
+            rsBuf.putMPInt(s);
+
+            return rsBuf.getCompactData();
         }
     }
 

@@ -1,15 +1,20 @@
 package com.antonzhdanov.apache.sshd.agent.cloud;
 
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.crypto.util.OpenSSHPublicKeyUtil;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SSHNamedCurves;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
 
 import java.io.IOException;
 import java.security.PublicKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
 
 import static java.util.Objects.requireNonNull;
-import static org.testcontainers.shaded.org.bouncycastle.crypto.util.OpenSSHPublicKeyUtil.encodePublicKey;
-import static org.testcontainers.shaded.org.bouncycastle.crypto.util.PublicKeyFactory.createKey;
 
 public class OpenSshServerContainer extends GenericContainer<OpenSshServerContainer> {
     public OpenSshServerContainer(PublicKey publicKey) {
@@ -28,8 +33,19 @@ public class OpenSshServerContainer extends GenericContainer<OpenSshServerContai
 
     private String encode(PublicKey publicKey) {
         try {
-            return "ssh-rsa " +
-                    Base64.getEncoder().encodeToString(encodePublicKey(createKey(publicKey.getEncoded())));
+            String prefix = null;
+            AsymmetricKeyParameter cipherParameters = PublicKeyFactory.createKey(publicKey.getEncoded());
+
+            if (publicKey instanceof RSAPublicKey) {
+                prefix = "ssh-rsa";
+            } else if (publicKey instanceof ECPublicKey) {
+                prefix = "ecdsa-sha2-" + SSHNamedCurves.getNameForParameters(((ECPublicKeyParameters) cipherParameters).getParameters());
+            } else {
+                throw new UnsupportedOperationException(publicKey.getClass().getCanonicalName());
+            }
+
+            return prefix + " " +
+                    Base64.getEncoder().encodeToString(OpenSSHPublicKeyUtil.encodePublicKey(cipherParameters));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

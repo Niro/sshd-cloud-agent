@@ -40,6 +40,9 @@
     </modules>
 
     <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+
         <sshd-core.version>2.9.2</sshd-core.version>
         <aws-kms.version>2.20.12</aws-kms.version>
         <google-cloud-kms.version>2.15.0</google-cloud-kms.version>
@@ -115,17 +118,4 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>9</source>
-                    <target>9</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

@@ -7,8 +7,14 @@ import com.google.cloud.kms.v1.AsymmetricSignRequest;
 import com.google.cloud.kms.v1.AsymmetricSignResponse;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.protobuf.ByteString;
+import org.apache.sshd.common.util.buffer.Buffer;
+import org.apache.sshd.common.util.buffer.ByteArrayBuffer;
+import org.apache.sshd.common.util.io.der.DERParser;
 
+import java.io.StreamCorruptedException;
+import java.math.BigInteger;
 import java.security.PublicKey;
+import java.security.interfaces.ECPublicKey;
 
 import static java.util.Objects.requireNonNull;
 
