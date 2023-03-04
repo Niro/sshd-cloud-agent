@@ -11,7 +11,7 @@ import java.security.PublicKey;
 
 import static java.util.Objects.requireNonNull;
 
-public class AwsSigner implements Signer<AwsCloudKeyInfo> 
+public class AwsSigner implements Signer<AwsCloudKeyInfo> {
 
     private final KmsClient kmsClient;
     private final AwsSignatureAlgorithmMapper signatureAlgorithmMapper;
