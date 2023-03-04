@@ -25,7 +25,7 @@ public class AwsPublicKeyLoader implements PublicKeyLoader<AwsCloudKeyInfo> {
     }
 
     @Override
-    public CloudPublicKey<AwsCloudKeyInfo, ? extends PublicKey> getPublicKey(AwsCloudKeyInfo keyInfo) {
+    public CloudPublicKey<AwsCloudKeyInfo, ? extends PublicKey> loadPublicKey(AwsCloudKeyInfo keyInfo) {
         GetPublicKeyRequest request = GetPublicKeyRequest.builder().keyId(keyInfo.getKeyId()).build();
         GetPublicKeyResponse response = kmsClient.getPublicKey(request);
 

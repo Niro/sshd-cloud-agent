@@ -115,7 +115,7 @@ public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean i
             synchronized (this) {
                 if (publicKeyLoaded.compareAndSet(false, true)) {
                     try {
-                        cloudPublicKey = publicKeyLoader.getPublicKey(keyInfo);
+                        cloudPublicKey = publicKeyLoader.loadPublicKey(keyInfo);
                     } catch (Exception exc) {
                         publicKeyLoaded.set(false);
                     }

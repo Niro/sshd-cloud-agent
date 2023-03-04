@@ -24,7 +24,7 @@ public class GoogleCloudSshAgentProvider implements CloudSshAgentProvider<Google
 
     @Override
     public CloudSshAgent<GoogleCloudKeyInfo> create(Session session) {
-        session.setSignatureFactories(Collections.singletonList(BuiltinSignatures.resolveFactory(keyInfo.getSignatureAlgorithm().toKnownAlgorithm())));
+        session.setSignatureFactories(Collections.singletonList(BuiltinSignatures.resolveFactory(keyInfo.getSignatureAlgorithm().toOpenSshFormat())));
 
         return new CloudSshAgent<>(new GoogleSigner(keyManagementServiceClient),
                 new GooglePublicKeyLoader(keyManagementServiceClient, new CloudPublicKeyFactory()),

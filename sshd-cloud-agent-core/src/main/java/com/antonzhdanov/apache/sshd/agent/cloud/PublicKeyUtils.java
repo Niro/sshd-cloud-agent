@@ -76,7 +76,6 @@ public class PublicKeyUtils {
                 return "RSA";
             case ECDSA_OID:
                 return "EC";
-//                throw new UnsupportedOperationException("ECDSA is not supported yet, use RSA");
             default:
                 throw new UnsupportedOperationException("Unknown algorithm for OID " + oid);
         }

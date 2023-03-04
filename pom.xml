@@ -37,17 +37,19 @@
         <module>sshd-cloud-agent-test</module>
         <module>sshd-cloud-agent-aws</module>
         <module>sshd-cloud-agent-google</module>
+<!--        <module>sshd-cloud-agent-akeyless</module>-->
     </modules>
 
     <properties>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
 
         <sshd-core.version>2.9.2</sshd-core.version>
         <aws-kms.version>2.20.12</aws-kms.version>
         <google-cloud-kms.version>2.15.0</google-cloud-kms.version>
         <testcontainers.version>1.17.6</testcontainers.version>
         <lombok.version>1.18.26</lombok.version>
+        <gson.version>2.10.1</gson.version>
     </properties>
 
     <dependencyManagement>
@@ -76,6 +78,11 @@
                 <groupId>org.testcontainers</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <version>${testcontainers.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

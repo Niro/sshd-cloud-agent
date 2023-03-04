@@ -22,7 +22,7 @@ public class GooglePublicKeyLoader implements PublicKeyLoader<GoogleCloudKeyInfo
     }
 
     @Override
-    public CloudPublicKey<GoogleCloudKeyInfo, ? extends java.security.PublicKey> getPublicKey(GoogleCloudKeyInfo keyInfo) {
+    public CloudPublicKey<GoogleCloudKeyInfo, ? extends java.security.PublicKey> loadPublicKey(GoogleCloudKeyInfo keyInfo) {
         PublicKey response = keyManagementServiceClient.getPublicKey(keyInfo.toCryptoKeyVersionName());
 
         java.security.PublicKey publicKey = PublicKeyUtils.fromPem(response.getPem());
