@@ -22,12 +22,9 @@ public class GooglePublicKeyLoader implements PublicKeyLoader<GoogleCloudKeyInfo
     }
 
     @Override
-    public CompletableFuture<CloudPublicKey<GoogleCloudKeyInfo, ? extends java.security.PublicKey>> getPublicKey(GoogleCloudKeyInfo keyInfo) {
-        return CompletableFuture.supplyAsync(() -> keyManagementServiceClient.getPublicKey(keyInfo.toCryptoKeyVersionName()))
-                .thenApply(response -> processResponse(response, keyInfo));
-    }
+    public CloudPublicKey<GoogleCloudKeyInfo, ? extends java.security.PublicKey> getPublicKey(GoogleCloudKeyInfo keyInfo) {
+        PublicKey response = keyManagementServiceClient.getPublicKey(keyInfo.toCryptoKeyVersionName());
 
-    private CloudPublicKey<GoogleCloudKeyInfo, ? extends java.security.PublicKey> processResponse(PublicKey response, GoogleCloudKeyInfo keyInfo) {
         java.security.PublicKey publicKey = PublicKeyUtils.fromPem(response.getPem());
 
         return cloudPublicKeyFactory.create(publicKey, keyInfo);

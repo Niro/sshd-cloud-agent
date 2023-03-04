@@ -5,6 +5,7 @@ import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKeyFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.PublicKeyLoader;
 import com.antonzhdanov.apache.sshd.agent.cloud.PublicKeyUtils;
 import software.amazon.awssdk.services.kms.KmsAsyncClient;
+import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.GetPublicKeyRequest;
 import software.amazon.awssdk.services.kms.model.GetPublicKeyResponse;
 
@@ -15,22 +16,21 @@ import static java.util.Objects.requireNonNull;
 
 public class AwsPublicKeyLoader implements PublicKeyLoader<AwsCloudKeyInfo> {
 
-    private final KmsAsyncClient kmsAsyncClient;
+    private final KmsClient kmsClient;
     private final CloudPublicKeyFactory cloudPublicKeyFactory;
 
-    public AwsPublicKeyLoader(KmsAsyncClient kmsAsyncClient, CloudPublicKeyFactory cloudPublicKeyFactory) {
-        this.kmsAsyncClient = requireNonNull(kmsAsyncClient, "kmsAsyncClient");
+    public AwsPublicKeyLoader(KmsClient kmsClient, CloudPublicKeyFactory cloudPublicKeyFactory) {
+        this.kmsClient = requireNonNull(kmsClient, "kmsClient");
         this.cloudPublicKeyFactory = requireNonNull(cloudPublicKeyFactory, "cloudPublicKeyFactory");
     }
 
     @Override
-    public CompletableFuture<CloudPublicKey<AwsCloudKeyInfo, ? extends PublicKey>> getPublicKey(AwsCloudKeyInfo keyInfo) {
-        return kmsAsyncClient.getPublicKey(GetPublicKeyRequest.builder().keyId(keyInfo.getKeyId()).build())
-                .thenApply(response -> processResponse(response, keyInfo));
-    }
+    public CloudPublicKey<AwsCloudKeyInfo, ? extends PublicKey> getPublicKey(AwsCloudKeyInfo keyInfo) {
+        GetPublicKeyRequest request = GetPublicKeyRequest.builder().keyId(keyInfo.getKeyId()).build();
+        GetPublicKeyResponse response = kmsClient.getPublicKey(request);
 
-    private CloudPublicKey<AwsCloudKeyInfo, ? extends PublicKey> processResponse(GetPublicKeyResponse response, AwsCloudKeyInfo keyInfo) {
         PublicKey publicKey = PublicKeyUtils.parsePublicKey(response.publicKey().asByteArray());
+
         return cloudPublicKeyFactory.create(publicKey, keyInfo);
     }
 }

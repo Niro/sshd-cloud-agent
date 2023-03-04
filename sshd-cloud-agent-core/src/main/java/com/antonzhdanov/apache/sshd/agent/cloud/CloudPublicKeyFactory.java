@@ -1,8 +1,8 @@
 package com.antonzhdanov.apache.sshd.agent.cloud;
 
-import com.antonzhdanov.apache.sshd.agent.cloud.key.DsaCloudPublicKey;
 import com.antonzhdanov.apache.sshd.agent.cloud.key.EcCloudPublicKey;
 import com.antonzhdanov.apache.sshd.agent.cloud.key.RsaCloudPublicKey;
+import org.apache.sshd.common.util.io.der.ASN1Object;
 
 import java.security.PublicKey;
 import java.security.interfaces.DSAPublicKey;
@@ -15,8 +15,6 @@ public class CloudPublicKeyFactory {
             return new RsaCloudPublicKey<>((RSAPublicKey) publicKey, cloudKeyInfo);
         } if (publicKey instanceof ECPublicKey) {
             return new EcCloudPublicKey<>((ECPublicKey) publicKey, cloudKeyInfo);
-        } else if (publicKey instanceof DSAPublicKey) {
-            return new DsaCloudPublicKey<>((DSAPublicKey) publicKey, cloudKeyInfo);
         } else {
             throw new UnsupportedOperationException("Unsupported key");
         }

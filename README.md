@@ -10,3 +10,8 @@ SSHD extension for client auth using SSH Key from cloud
 - [ ] Yandex
 - [ ] Alibaba
 - [ ] Tencent Cloud
+
+## Supported Key algorithms
+
+- [x] RSA
+- [ ] EC

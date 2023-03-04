@@ -21,7 +21,7 @@ public class OpenSshServerContainer extends GenericContainer<OpenSshServerContai
         withEnv("SUDO_ACCESS", "false");
         withEnv("PASSWORD_ACCESS", "false");
         withEnv("USER_NAME", "user");
-        addFixedExposedPort(2222, 2222);
+        addExposedPort(2222);
 
         waitingFor(new HostPortWaitStrategy());
     }

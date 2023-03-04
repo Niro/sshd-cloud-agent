@@ -3,46 +3,40 @@ package com.antonzhdanov.apache.sshd.agent.cloud;
 import org.apache.sshd.agent.SshAgentFactory;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.session.ClientSession;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.Duration;
+import java.util.stream.Stream;
 
 import static com.antonzhdanov.apache.sshd.agent.cloud.TestUtils.readPublicKey;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Testcontainers
-public abstract class AbstractIntegrationTest {
-    @Container
-    protected final OpenSshServerContainer sshServerContainer;
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public abstract class AbstractIntegrationTest<K extends CloudKeyInfo> {
 
-    protected AbstractIntegrationTest(String publicKeyName) {
-        this.sshServerContainer = new OpenSshServerContainer(readPublicKey(publicKeyName));
-    }
+    @ParameterizedTest
+    @MethodSource("testData")
+    public void testAuthSucceeded(String publicKey, K keyInfo) throws Exception {
+        try (OpenSshServerContainer container = new OpenSshServerContainer(readPublicKey(publicKey))) {
+            container.start();
+            assertTrue(container.isRunning(), "Open SSH Server container did not start");
 
-    @BeforeEach
-    public void ensureThatContainerIsRunning() {
-        assertTrue(sshServerContainer.isRunning(), "Open SSH Server container did not start");
-    }
+            try (SshClient sshClient = SshClient.setUpDefaultClient()) {
+                sshClient.setAgentFactory(createCloudFactory(keyInfo));
+                sshClient.start();
 
-    @Test
-    public void testAuthSucceeded() throws Exception {
-        try (SshClient sshClient = SshClient.setUpDefaultClient()) {
-            sshClient.setAgentFactory(createCloudFactory());
-            prepareClient(sshClient);
-            sshClient.start();
-
-            try (ClientSession session = sshClient.connect("user", "localhost", 2222).verify(Duration.ofSeconds(5)).getSession()) {
-                session.auth().verify(Duration.ofSeconds(5));
+                try (ClientSession session = sshClient.connect("user", "localhost", container.getFirstMappedPort())
+                        .verify(Duration.ofSeconds(5)).getSession()) {
+                    session.auth().verify(Duration.ofSeconds(5));
+                }
             }
         }
     }
 
-    protected abstract SshAgentFactory createCloudFactory() throws Exception;
+    protected abstract Stream<Arguments> testData();
 
-    protected void prepareClient(SshClient sshClient) {
-
-    }
+    protected abstract SshAgentFactory createCloudFactory(K keyInfo) throws Exception;
 }

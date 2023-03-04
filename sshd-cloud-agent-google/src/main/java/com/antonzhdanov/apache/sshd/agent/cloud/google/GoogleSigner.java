@@ -2,7 +2,6 @@ package com.antonzhdanov.apache.sshd.agent.cloud.google;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKey;
 import com.antonzhdanov.apache.sshd.agent.cloud.Signer;
-import com.antonzhdanov.apache.sshd.agent.cloud.signature.Signature;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignatureAlgorithm;
 import com.google.cloud.kms.v1.AsymmetricSignRequest;
 import com.google.cloud.kms.v1.AsymmetricSignResponse;
@@ -22,13 +21,13 @@ public class GoogleSigner implements Signer<GoogleCloudKeyInfo> {
     }
 
     @Override
-    public Signature sign(byte[] data, GoogleCloudKeyInfo keyInfo, SignatureAlgorithm algorithm) {
+    public byte[] sign(byte[] data, GoogleCloudKeyInfo keyInfo, SignatureAlgorithm algorithm) {
         AsymmetricSignResponse asymmetricSignResponse = keyManagementServiceClient.asymmetricSign(AsymmetricSignRequest.newBuilder()
                 .setData(ByteString.copyFrom(data))
                 .setName(keyInfo.toCryptoKeyVersionName().toString())
                 .build());
 
-        return new Signature(asymmetricSignResponse.getSignature().toByteArray(), keyInfo.getSignatureAlgorithm());
+        return asymmetricSignResponse.getSignature().toByteArray();
     }
 
     @Override

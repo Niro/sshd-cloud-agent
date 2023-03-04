@@ -11,11 +11,19 @@
 
     <artifactId>sshd-cloud-agent-google</artifactId>
 
+    <name>SSHD Cloud Agent - Google Implementation</name>
+    <description>Google Cloud Implementation</description>
+
     <dependencies>
         <dependency>
             <groupId>com.antonzhdanov</groupId>
             <artifactId>sshd-cloud-agent-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>

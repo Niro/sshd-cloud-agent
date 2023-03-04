@@ -11,6 +11,9 @@
 
     <artifactId>sshd-cloud-agent-core</artifactId>
 
+    <name>SSHD Cloud Agent - Core</name>
+    <description>Core API</description>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.sshd</groupId>

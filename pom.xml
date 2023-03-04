@@ -7,6 +7,31 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>SSHD Cloud Agent</name>
+    <description>SSHD extension for client auth using Key from cloud</description>
+    <url>https://github.com/Niro/sshd-cloud-agent</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Anton Zhdanov</name>
+            <email>me@antonzhdanov.com</email>
+            <organizationUrl>https://github.com/Niro</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/Niro/sshd-cloud-agent.git</connection>
+        <developerConnection>scm:git:ssh://github.com:Niro/sshd-cloud-agent.git</developerConnection>
+        <url>https://github.com/Niro/sshd-cloud-agent/tree/main</url>
+    </scm>
+
     <modules>
         <module>sshd-cloud-agent-core</module>
         <module>sshd-cloud-agent-test</module>
@@ -19,6 +44,7 @@
         <aws-kms.version>2.20.12</aws-kms.version>
         <google-cloud-kms.version>2.15.0</google-cloud-kms.version>
         <testcontainers.version>1.17.6</testcontainers.version>
+        <lombok.version>1.18.26</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -55,10 +81,40 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.26</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>IT</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.22.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <includes>
+                                <include>**/*IntegrationTest</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>

@@ -11,6 +11,9 @@
 
     <artifactId>sshd-cloud-agent-test</artifactId>
 
+    <name>SSHD Cloud Agent - Test</name>
+    <description>Testing common components</description>
+
     <dependencies>
         <dependency>
             <groupId>com.antonzhdanov</groupId>

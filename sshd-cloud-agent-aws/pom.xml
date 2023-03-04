@@ -11,11 +11,19 @@
 
     <artifactId>sshd-cloud-agent-aws</artifactId>
 
+    <name>SSHD Cloud Agent - AWS Implementation</name>
+    <description>AWS Implementation</description>
+
     <dependencies>
         <dependency>
             <groupId>com.antonzhdanov</groupId>
             <artifactId>sshd-cloud-agent-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
