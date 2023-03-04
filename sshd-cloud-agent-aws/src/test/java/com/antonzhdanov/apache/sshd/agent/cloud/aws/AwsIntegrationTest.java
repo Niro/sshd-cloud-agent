@@ -22,7 +22,8 @@ public class AwsIntegrationTest extends AbstractIntegrationTest<AwsCloudKeyInfo>
     @Override
     protected Stream<Arguments> testData() {
         return Stream.of(
-                Arguments.of("RSA-2048.pub", new AwsCloudKeyInfo("ecde8af1-4f4b-4ccd-be36-7a8b4409b23f"))
+                Arguments.of("RSA-2048.pub", new AwsCloudKeyInfo("ecde8af1-4f4b-4ccd-be36-7a8b4409b23f")),
+                Arguments.of("ECC_NIST_P256.pub", new AwsCloudKeyInfo("f827f37f-79ff-44ca-aa0c-843722df8d46"))
         );
     }
 

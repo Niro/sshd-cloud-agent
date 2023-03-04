@@ -12,10 +12,13 @@ import java.time.Duration;
 import java.util.stream.Stream;
 
 import static com.antonzhdanov.apache.sshd.agent.cloud.TestUtils.readPublicKey;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractIntegrationTest<K extends CloudKeyInfo> {
+
+    private static final String ECHO_STRING = String.valueOf(System.currentTimeMillis());
 
     @ParameterizedTest
     @MethodSource("testData")
@@ -31,6 +34,9 @@ public abstract class AbstractIntegrationTest<K extends CloudKeyInfo> {
                 try (ClientSession session = sshClient.connect("user", "localhost", container.getFirstMappedPort())
                         .verify(Duration.ofSeconds(5)).getSession()) {
                     session.auth().verify(Duration.ofSeconds(5));
+
+                    assertEquals(ECHO_STRING,
+                            session.executeRemoteCommand("echo " + ECHO_STRING).replace("\n", ""));
                 }
             }
         }
