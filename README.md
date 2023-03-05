@@ -6,8 +6,8 @@ SSHD extension for client auth using SSH Key from cloud
 
 - [x] Amazon
 - [x] Google
-- [ ] Azure
-- [ ] Yandex
+- [x] Azure
+- [ ] Yandex - no API for asymmetric sign?
 - [ ] Alibaba
 - [ ] Tencent Cloud
 

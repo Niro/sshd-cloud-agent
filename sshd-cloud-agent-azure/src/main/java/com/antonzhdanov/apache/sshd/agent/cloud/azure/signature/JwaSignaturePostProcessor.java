@@ -22,19 +22,13 @@ public class JwaSignaturePostProcessor implements SignaturePostProcessor {
         https://www.rfc-editor.org/rfc/rfc7518#page-9
      */
     private byte[] postProcessEcSignature(byte[] signature) {
-        int middle;
-        if (signature.length == 64) {
-            middle = 32;
-        } else if (signature.length == 96) {
-            middle = 48;
-        } else if (signature.length == 132) {
-            middle = 66;
-        } else {
+        int length = signature.length;
+        if (length != 64 && length != 96 && length != 132) {
             throw new RuntimeException("Invalid signature");
         }
 
-        BigInteger r = new BigInteger(Arrays.copyOfRange(signature, 0, middle));
-        BigInteger s = new BigInteger(Arrays.copyOfRange(signature, middle, signature.length));
+        BigInteger r = new BigInteger(Arrays.copyOfRange(signature, 0, length / 2));
+        BigInteger s = new BigInteger(Arrays.copyOfRange(signature, length / 2, length));
 
         ByteArrayBuffer byteArrayBuffer = new ByteArrayBuffer();
         byteArrayBuffer.putMPInt(r);

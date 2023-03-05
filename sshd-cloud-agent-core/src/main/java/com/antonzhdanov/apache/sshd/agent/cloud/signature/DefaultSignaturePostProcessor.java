@@ -19,6 +19,12 @@ public class DefaultSignaturePostProcessor implements SignaturePostProcessor {
         return signature;
     }
 
+    /*
+        https://www.rfc-editor.org/rfc/rfc6979#section-2.4
+
+        <...> a common way is to use a DER-encoded ASN.1 structure (a SEQUENCE
+        of two INTEGERs, for r and s, in that order).
+     */
     private byte[] postProcessEcSignature(byte[] sig) {
         try (DERParser parser = new DERParser(sig)) {
             int type = parser.read();

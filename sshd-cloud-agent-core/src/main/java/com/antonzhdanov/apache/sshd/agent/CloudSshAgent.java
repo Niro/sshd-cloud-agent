@@ -126,37 +126,6 @@ public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean i
         }
     }
 
-    private byte[] postProcessEcSignature(byte[] sig) throws IOException {
-        try (DERParser parser = new DERParser(sig)) {
-            int type = parser.read();
-            if (type != 0x30) {
-                throw new StreamCorruptedException(
-                        "Invalid signature format - not a DER SEQUENCE: 0x" + Integer.toHexString(type));
-            }
-
-            // length of remaining encoding of the 2 integers
-            int remainLen = parser.readLength();
-            /*
-             * There are supposed to be 2 INTEGERs, each encoded with:
-             *
-             * - one byte representing the fact that it is an INTEGER - one byte of the integer encoding length - at
-             * least one byte of integer data (zero length is not an option)
-             */
-            if (remainLen < (2 * 3)) {
-                throw new StreamCorruptedException("Invalid signature format - not enough encoded data length: " + remainLen);
-            }
-
-            BigInteger r = parser.readBigInteger();
-            BigInteger s = parser.readBigInteger();
-            // Write the <r,s> to its own types writer.
-            Buffer rsBuf = new ByteArrayBuffer();
-            rsBuf.putMPInt(r);
-            rsBuf.putMPInt(s);
-
-            return rsBuf.getCompactData();
-        }
-    }
-
     private static class PublicKeyWithComment extends AbstractMap.SimpleImmutableEntry<PublicKey, String> {
         private PublicKeyWithComment(PublicKey publicKey, String comment) {
             super(requireNonNull(publicKey, "publicKey"), requireNonNull(comment, "comment"));
