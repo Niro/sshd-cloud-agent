@@ -37,8 +37,6 @@
         <module>sshd-cloud-agent-test</module>
         <module>sshd-cloud-agent-aws</module>
         <module>sshd-cloud-agent-google</module>
-<!--        <module>sshd-cloud-agent-akeyless</module>-->
-<!--        <module>sshd-cloud-agent-yandex</module>-->
         <module>sshd-cloud-agent-azure</module>
     </modules>
 
