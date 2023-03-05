@@ -31,4 +31,7 @@ jobs:
           GOOGLE_AUTH_JSON: ${{ secrets.GOOGLE_AUTH_JSON }}
           GOOGLE_LOCATION: ${{ secrets.GOOGLE_LOCATION }}
           GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: mvn --batch-mode --update-snapshots -P IT verify

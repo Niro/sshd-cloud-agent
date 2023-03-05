@@ -3,6 +3,7 @@ package com.antonzhdanov.apache.sshd.agent.cloud.google;
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgent;
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgentProvider;
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKeyFactory;
+import com.antonzhdanov.apache.sshd.agent.cloud.signature.DefaultSignaturePostProcessor;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.signature.BuiltinSignatures;
@@ -28,6 +29,7 @@ public class GoogleCloudSshAgentProvider implements CloudSshAgentProvider<Google
 
         return new CloudSshAgent<>(new GoogleSigner(keyManagementServiceClient),
                 new GooglePublicKeyLoader(keyManagementServiceClient, new CloudPublicKeyFactory()),
+                new DefaultSignaturePostProcessor(),
                 keyInfo,
                 algo -> Optional.of(keyInfo.getSignatureAlgorithm()));
     }

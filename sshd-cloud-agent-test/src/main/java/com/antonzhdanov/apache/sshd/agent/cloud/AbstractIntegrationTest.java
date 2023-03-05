@@ -3,6 +3,7 @@ package com.antonzhdanov.apache.sshd.agent.cloud;
 import org.apache.sshd.agent.SshAgentFactory;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.session.ClientSession;
+import org.junit.Rule;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -33,7 +34,7 @@ public abstract class AbstractIntegrationTest<K extends CloudKeyInfo> {
 
                 try (ClientSession session = sshClient.connect("user", "localhost", container.getFirstMappedPort())
                         .verify(Duration.ofSeconds(5)).getSession()) {
-                    session.auth().verify(Duration.ofSeconds(5));
+                    session.auth().verify(Duration.ofSeconds(10));
 
                     assertEquals(ECHO_STRING,
                             session.executeRemoteCommand("echo " + ECHO_STRING).replace("\n", ""));

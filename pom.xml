@@ -38,6 +38,8 @@
         <module>sshd-cloud-agent-aws</module>
         <module>sshd-cloud-agent-google</module>
 <!--        <module>sshd-cloud-agent-akeyless</module>-->
+<!--        <module>sshd-cloud-agent-yandex</module>-->
+        <module>sshd-cloud-agent-azure</module>
     </modules>
 
     <properties>
@@ -50,6 +52,8 @@
         <testcontainers.version>1.17.6</testcontainers.version>
         <lombok.version>1.18.26</lombok.version>
         <gson.version>2.10.1</gson.version>
+        <yandex-cloud-sdk.version>2.5.3</yandex-cloud-sdk.version>
+        <azure.version>1.2.10</azure.version>
     </properties>
 
     <dependencyManagement>
@@ -58,6 +62,18 @@
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-core</artifactId>
                 <version>${sshd-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yandex.cloud</groupId>
+                <artifactId>java-sdk-services</artifactId>
+                <version>${yandex-cloud-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.azure</groupId>
+                <artifactId>azure-sdk-bom</artifactId>
+                <version>${azure.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>

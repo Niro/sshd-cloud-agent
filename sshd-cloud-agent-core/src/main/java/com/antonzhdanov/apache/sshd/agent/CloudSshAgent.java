@@ -7,6 +7,7 @@ import com.antonzhdanov.apache.sshd.agent.cloud.exception.CloudSshAgentException
 import com.antonzhdanov.apache.sshd.agent.cloud.Signer;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignatureAlgorithm;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignatureAlgorithmMapper;
+import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignaturePostProcessor;
 import org.apache.sshd.agent.SshAgent;
 import org.apache.sshd.agent.SshAgentKeyConstraint;
 import org.apache.sshd.common.SshException;
@@ -32,6 +33,7 @@ public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean i
 
     private final Signer<K> signer;
     private final PublicKeyLoader<K> publicKeyLoader;
+    private final SignaturePostProcessor signaturePostProcessor;
     private final K keyInfo;
     private final SignatureAlgorithmMapper<SignatureAlgorithm, String> signatureAlgorithmMapper;
 
@@ -40,10 +42,12 @@ public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean i
 
     public CloudSshAgent(Signer<K> signer,
                          PublicKeyLoader<K> publicKeyLoader,
+                         SignaturePostProcessor signaturePostProcessor,
                          K keyInfo,
                          SignatureAlgorithmMapper<SignatureAlgorithm, String> signatureAlgorithmMapper) {
         this.signer = requireNonNull(signer, "signer");
         this.publicKeyLoader = requireNonNull(publicKeyLoader, "publicKeyLoader");
+        this.signaturePostProcessor = requireNonNull(signaturePostProcessor, "signaturePostProcessor");
         this.keyInfo = requireNonNull(keyInfo, "keyInfo");
         this.signatureAlgorithmMapper = requireNonNull(signatureAlgorithmMapper, "signatureAlgorithmMapper");
     }
@@ -75,11 +79,9 @@ public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean i
 
             byte[] signature = signer.sign(data, cloudPublicKey.getCloudKeyInfo(), signatureAlgorithm);
 
-            if (cloudPublicKey instanceof ECPublicKey) {
-                signature = postProcessEcSignature(signature);
-            }
+            byte[] processedSignature = signaturePostProcessor.postProcessSignature(signature, cloudPublicKey);
 
-            return new SignatureWithAlgorithm(signature, algo);
+            return new SignatureWithAlgorithm(processedSignature, algo);
         } catch (Exception exc) {
             throw new CloudSshAgentException("Signature error", exc);
         }
@@ -117,7 +119,7 @@ public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean i
                     try {
                         cloudPublicKey = publicKeyLoader.loadPublicKey(keyInfo);
                     } catch (Exception exc) {
-                        publicKeyLoaded.set(false);
+                        throw new RuntimeException(exc);
                     }
                 }
             }
