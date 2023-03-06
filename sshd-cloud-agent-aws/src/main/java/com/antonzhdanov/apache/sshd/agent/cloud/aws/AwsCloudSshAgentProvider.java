@@ -14,15 +14,13 @@ import static java.util.Objects.requireNonNull;
 public class AwsCloudSshAgentProvider implements CloudSshAgentProvider<AwsCloudKeyInfo> {
 
     private final KmsClient kmsClient;
-    private final AwsCloudKeyInfo keyInfo;
 
-    public AwsCloudSshAgentProvider(KmsClient kmsClient, AwsCloudKeyInfo keyInfo) {
+    public AwsCloudSshAgentProvider(KmsClient kmsClient) {
         this.kmsClient = requireNonNull(kmsClient, "kmsClient");
-        this.keyInfo = requireNonNull(keyInfo, "keyInfo");
     }
 
     @Override
-    public CloudSshAgent<AwsCloudKeyInfo> create(Session session) {
+    public CloudSshAgent<AwsCloudKeyInfo> create(Session session, AwsCloudKeyInfo keyInfo) {
         return new CloudSshAgent<>(new AwsSigner(kmsClient, new AwsSignatureAlgorithmMapper()),
                 new AwsPublicKeyLoader(kmsClient, new CloudPublicKeyFactory<>(new JcaPublicKeyFactory())),
                 new DefaultSignaturePostProcessor(),

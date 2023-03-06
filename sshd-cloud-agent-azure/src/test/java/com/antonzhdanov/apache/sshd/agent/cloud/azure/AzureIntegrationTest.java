@@ -5,7 +5,6 @@ import com.antonzhdanov.apache.sshd.agent.cloud.AbstractIntegrationTest;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.keys.cryptography.CryptographyClient;
 import com.azure.security.keyvault.keys.cryptography.CryptographyClientBuilder;
-import org.apache.sshd.agent.SshAgentFactory;
 import org.testng.annotations.DataProvider;
 
 public class AzureIntegrationTest extends AbstractIntegrationTest<AzureCloudKeyInfo> {
@@ -23,8 +22,8 @@ public class AzureIntegrationTest extends AbstractIntegrationTest<AzureCloudKeyI
     }
 
     @Override
-    protected SshAgentFactory createCloudFactory(AzureCloudKeyInfo keyInfo) {
-        return CloudSshAgentFactory.of(new AzureCloudSshAgentProvider(this::createCryptographyClient, keyInfo));
+    protected CloudSshAgentFactory<AzureCloudKeyInfo> createCloudFactory() {
+        return CloudSshAgentFactory.of(new AzureCloudSshAgentProvider(this::createCryptographyClient));
     }
 
     private CryptographyClient createCryptographyClient(AzureCloudKeyInfo keyInfo) {

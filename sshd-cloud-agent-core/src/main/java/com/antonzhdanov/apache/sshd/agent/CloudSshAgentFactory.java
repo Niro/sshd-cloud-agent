@@ -11,12 +11,15 @@ import org.apache.sshd.common.session.Session;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Objects.requireNonNull;
 
 public class CloudSshAgentFactory<K extends CloudKeyInfo> implements SshAgentFactory {
 
     private final CloudSshAgentProvider<K> sshAgentProvider;
+    private final Map<Session, K> keyInfosPerSession = new ConcurrentHashMap<>();
 
     private CloudSshAgentFactory(CloudSshAgentProvider<K> sshAgentProvider) {
         this.sshAgentProvider = requireNonNull(sshAgentProvider, "sshAgentProvider");
@@ -33,11 +36,17 @@ public class CloudSshAgentFactory<K extends CloudKeyInfo> implements SshAgentFac
 
     @Override
     public SshAgent createClient(Session session, FactoryManager manager) {
-        return sshAgentProvider.create(session);
+        return sshAgentProvider.create(session, keyInfosPerSession.get(session));
     }
 
     @Override
     public SshAgentServer createServer(ConnectionService service) {
         throw new UnsupportedOperationException();
+    }
+
+    public AutoCloseable addKeyInfoForSession(Session session, K keyInfo) {
+        keyInfosPerSession.put(session, keyInfo);
+
+        return () -> keyInfosPerSession.remove(session);
     }
 }

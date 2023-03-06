@@ -13,15 +13,13 @@ import static java.util.Objects.requireNonNull;
 public class AzureCloudSshAgentProvider implements CloudSshAgentProvider<AzureCloudKeyInfo> {
 
     private final CryptographyClientProvider cryptographyClientProvider;
-    private final AzureCloudKeyInfo keyInfo;
 
-    public AzureCloudSshAgentProvider(CryptographyClientProvider cryptographyClientProvider, AzureCloudKeyInfo keyInfo) {
+    public AzureCloudSshAgentProvider(CryptographyClientProvider cryptographyClientProvider) {
         this.cryptographyClientProvider = requireNonNull(cryptographyClientProvider, "cryptographyClientProvider");
-        this.keyInfo = requireNonNull(keyInfo, "keyInfo");
     }
 
     @Override
-    public CloudSshAgent<AzureCloudKeyInfo> create(Session session) {
+    public CloudSshAgent<AzureCloudKeyInfo> create(Session session, AzureCloudKeyInfo keyInfo) {
         return new CloudSshAgent<>(
                 new AzureSigner(cryptographyClientProvider, new AzureSignatureAlgorithmMapper()),
                 new AzurePublicKeyLoader(cryptographyClientProvider, new CloudPublicKeyFactory<>(new JcaPublicKeyFactory())),

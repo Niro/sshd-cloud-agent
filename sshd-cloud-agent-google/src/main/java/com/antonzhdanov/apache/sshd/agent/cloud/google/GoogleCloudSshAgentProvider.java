@@ -17,15 +17,13 @@ import static java.util.Objects.requireNonNull;
 public class GoogleCloudSshAgentProvider implements CloudSshAgentProvider<GoogleCloudKeyInfo> {
 
     private final KeyManagementServiceClient keyManagementServiceClient;
-    private final GoogleCloudKeyInfo keyInfo;
 
-    public GoogleCloudSshAgentProvider(KeyManagementServiceClient keyManagementServiceClient, GoogleCloudKeyInfo keyInfo) {
+    public GoogleCloudSshAgentProvider(KeyManagementServiceClient keyManagementServiceClient) {
         this.keyManagementServiceClient = requireNonNull(keyManagementServiceClient, "keyManagementServiceClient");
-        this.keyInfo = requireNonNull(keyInfo, "keyInfos");
     }
 
     @Override
-    public CloudSshAgent<GoogleCloudKeyInfo> create(Session session) {
+    public CloudSshAgent<GoogleCloudKeyInfo> create(Session session, GoogleCloudKeyInfo keyInfo) {
         session.setSignatureFactories(Collections.singletonList(BuiltinSignatures.resolveFactory(keyInfo.getSignatureAlgorithm().toOpenSshFormat())));
 
         return new CloudSshAgent<>(new GoogleSigner(keyManagementServiceClient),

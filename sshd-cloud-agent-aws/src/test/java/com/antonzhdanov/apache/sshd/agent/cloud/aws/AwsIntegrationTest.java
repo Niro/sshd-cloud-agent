@@ -2,7 +2,6 @@ package com.antonzhdanov.apache.sshd.agent.cloud.aws;
 
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgentFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.AbstractIntegrationTest;
-import org.apache.sshd.agent.SshAgentFactory;
 import org.testng.annotations.DataProvider;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -27,8 +26,8 @@ public class AwsIntegrationTest extends AbstractIntegrationTest<AwsCloudKeyInfo>
     }
 
     @Override
-    protected SshAgentFactory createCloudFactory(AwsCloudKeyInfo keyInfo) {
-        return CloudSshAgentFactory.of(new AwsCloudSshAgentProvider(createKmsClient(), keyInfo));
+    protected CloudSshAgentFactory<AwsCloudKeyInfo> createCloudFactory() {
+        return CloudSshAgentFactory.of(new AwsCloudSshAgentProvider(createKmsClient()));
     }
 
     private KmsClient createKmsClient() {

@@ -13,5 +13,5 @@ public interface CloudSshAgentProvider<K extends CloudKeyInfo> {
      *                algorithm due to that it is possible to specify exact algorithm used in signing process
      * @return cloud specific SSH Agent
      */
-    CloudSshAgent<K> create(Session session);
+    CloudSshAgent<K> create(Session session, K keyInfo);
 }
