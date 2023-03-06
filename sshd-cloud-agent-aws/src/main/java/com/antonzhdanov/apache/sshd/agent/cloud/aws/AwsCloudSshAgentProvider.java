@@ -2,7 +2,8 @@ package com.antonzhdanov.apache.sshd.agent.cloud.aws;
 
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgent;
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgentProvider;
-import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKeyFactory;
+import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
+import com.antonzhdanov.apache.sshd.agent.cloud.key.JcaPublicKeyFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.DefaultSignaturePostProcessor;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SshdSignatureAlgorithmMapper;
 import org.apache.sshd.common.session.Session;
@@ -23,7 +24,7 @@ public class AwsCloudSshAgentProvider implements CloudSshAgentProvider<AwsCloudK
     @Override
     public CloudSshAgent<AwsCloudKeyInfo> create(Session session) {
         return new CloudSshAgent<>(new AwsSigner(kmsClient, new AwsSignatureAlgorithmMapper()),
-                new AwsPublicKeyLoader(kmsClient, new CloudPublicKeyFactory<>()),
+                new AwsPublicKeyLoader(kmsClient, new CloudPublicKeyFactory<>(new JcaPublicKeyFactory())),
                 new DefaultSignaturePostProcessor(),
                 keyInfo, new SshdSignatureAlgorithmMapper());
     }

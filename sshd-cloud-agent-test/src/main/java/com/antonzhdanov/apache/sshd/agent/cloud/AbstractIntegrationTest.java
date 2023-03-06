@@ -3,26 +3,19 @@ package com.antonzhdanov.apache.sshd.agent.cloud;
 import org.apache.sshd.agent.SshAgentFactory;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.session.ClientSession;
-import org.junit.Rule;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.testng.annotations.Test;
 
 import java.time.Duration;
-import java.util.stream.Stream;
 
 import static com.antonzhdanov.apache.sshd.agent.cloud.TestUtils.readPublicKey;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractIntegrationTest<K extends CloudKeyInfo> {
 
     private static final String ECHO_STRING = String.valueOf(System.currentTimeMillis());
 
-    @ParameterizedTest
-    @MethodSource("testData")
+    @Test(dataProvider = "testData")
     public void testAuthSucceeded(String publicKey, K keyInfo) throws Exception {
         try (OpenSshServerContainer container = new OpenSshServerContainer(readPublicKey(publicKey))) {
             container.start();
@@ -43,7 +36,7 @@ public abstract class AbstractIntegrationTest<K extends CloudKeyInfo> {
         }
     }
 
-    protected abstract Stream<Arguments> testData();
+    protected abstract Object[][] testData();
 
     protected abstract SshAgentFactory createCloudFactory(K keyInfo) throws Exception;
 }

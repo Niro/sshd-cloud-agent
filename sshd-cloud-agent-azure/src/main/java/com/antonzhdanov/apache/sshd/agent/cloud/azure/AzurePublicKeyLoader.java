@@ -1,7 +1,7 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.azure;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKey;
-import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKeyFactory;
+import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.PublicKeyLoader;
 import com.azure.security.keyvault.keys.cryptography.CryptographyClient;
 import com.azure.security.keyvault.keys.models.JsonWebKey;

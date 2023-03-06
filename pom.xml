@@ -52,6 +52,8 @@
         <gson.version>2.10.1</gson.version>
         <yandex-cloud-sdk.version>2.5.3</yandex-cloud-sdk.version>
         <azure.version>1.2.10</azure.version>
+        <testng.version>7.6.1</testng.version>
+        <mockito.version>5.1.1</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -89,14 +91,19 @@
                 <version>${testcontainers.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <version>${testcontainers.version}</version>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -119,8 +126,9 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.22.0</version>
+                        <version>2.22.2</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -130,6 +138,7 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <skipITs>false</skipITs>
                             <includes>
                                 <include>**/*IntegrationTest</include>
                             </includes>
@@ -139,4 +148,27 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*IntegrationTest</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

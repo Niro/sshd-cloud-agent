@@ -3,13 +3,11 @@ package com.antonzhdanov.apache.sshd.agent.cloud.aws;
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgentFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.AbstractIntegrationTest;
 import org.apache.sshd.agent.SshAgentFactory;
-import org.junit.jupiter.params.provider.Arguments;
+import org.testng.annotations.DataProvider;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kms.KmsClient;
-
-import java.util.stream.Stream;
 
 import static com.antonzhdanov.apache.sshd.agent.cloud.TestUtils.readEnv;
 
@@ -20,11 +18,12 @@ public class AwsIntegrationTest extends AbstractIntegrationTest<AwsCloudKeyInfo>
     private static final String AWS_REGION_ENVIRONMENT_PROPERTY = "AWS_REGION";
 
     @Override
-    protected Stream<Arguments> testData() {
-        return Stream.of(
-                Arguments.of("RSA-2048.pub", new AwsCloudKeyInfo("ecde8af1-4f4b-4ccd-be36-7a8b4409b23f")),
-                Arguments.of("ECC_NIST_P256.pub", new AwsCloudKeyInfo("f827f37f-79ff-44ca-aa0c-843722df8d46"))
-        );
+    @DataProvider(parallel = true)
+    protected Object[][] testData() {
+        return new Object[][] {
+                {"RSA-2048.pub", new AwsCloudKeyInfo("ecde8af1-4f4b-4ccd-be36-7a8b4409b23f")},
+                {"ECC_NIST_P256.pub", new AwsCloudKeyInfo("f827f37f-79ff-44ca-aa0c-843722df8d46")}
+        };
     }
 
     @Override

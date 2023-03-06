@@ -1,49 +1,69 @@
-package com.antonzhdanov.apache.sshd.agent.cloud;
+package com.antonzhdanov.apache.sshd.agent.cloud.key;
 
+import lombok.SneakyThrows;
+import org.apache.sshd.common.cipher.ECCurves;
 import org.apache.sshd.common.util.io.der.ASN1Object;
 import org.apache.sshd.common.util.io.der.ASN1Type;
 import org.apache.sshd.common.util.io.der.DERParser;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.io.StringReader;
+import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.PublicKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.ECPoint;
+import java.security.spec.ECPublicKeySpec;
+import java.security.spec.KeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.apache.sshd.common.config.keys.loader.pem.ECDSAPEMResourceKeyPairParser.ECDSA_OID;
-import static org.apache.sshd.common.config.keys.loader.pem.RSAPEMResourceKeyPairParser.RSA_OID;
+public class JcaPublicKeyFactory implements PublicKeyFactory {
 
-public class PublicKeyUtils {
-    private PublicKeyUtils() {
-        throw new UnsupportedOperationException();
-    }
+    private static final String RSA = "RSA";
+    private static final String EC = "EC";
 
-    public static PublicKey parsePublicKey(byte[] encoded) {
-        try {
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+    private static final String RSA_OID = "1.2.840.113549.1.1.1";
+    private static final String EC_OID = "1.2.840.10045.2.1";
 
-            String algorithm = determineAlgorithm(encoded);
-            return KeyFactory.getInstance(algorithm).generatePublic(keySpec);
-        } catch (Exception exc) {
-            throw new RuntimeException("Unable to generate public key", exc);
-        }
-    }
-
-    public static PublicKey fromPem(String pem) {
+    @Override
+    public PublicKey create(String pem) {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(pem));
         String encoded = bufferedReader.lines()
                 .filter(line -> !line.startsWith("-----BEGIN") && !line.startsWith("-----END"))
                 .collect(Collectors.joining());
 
-        return parsePublicKey(Base64.getDecoder().decode(encoded));
+        return create(Base64.getDecoder().decode(encoded));
     }
 
-    private static String determineAlgorithm(byte[] bytes) {
+    @Override
+    public PublicKey create(byte[] encoded) {
+        String algorithm = determineAlgorithm(encoded);
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+
+        return create(keySpec, algorithm);
+    }
+
+    @Override
+    public RSAPublicKey create(BigInteger modulus, BigInteger publicExponent) {
+        return (RSAPublicKey) create(new RSAPublicKeySpec(modulus, publicExponent), RSA);
+    }
+
+    @Override
+    public ECPublicKey create(BigInteger x, BigInteger y, ECCurves ecCurve) {
+        return (ECPublicKey) create(new ECPublicKeySpec(new ECPoint(x, y), ecCurve.getParameters()), EC);
+    }
+
+    @SneakyThrows
+    private PublicKey create(KeySpec keySpec, String algorithm) {
+        return KeyFactory.getInstance(algorithm).generatePublic(keySpec);
+    }
+
+    private String determineAlgorithm(byte[] bytes) {
         String oid;
         try (DERParser parser = new DERParser(bytes)) {
             ASN1Object publicKeyInfo = parser.readObject();
@@ -73,9 +93,9 @@ public class PublicKeyUtils {
 
         switch (oid) {
             case RSA_OID:
-                return "RSA";
-            case ECDSA_OID:
-                return "EC";
+                return RSA;
+            case EC_OID:
+                return EC;
             default:
                 throw new UnsupportedOperationException("Unknown algorithm for OID " + oid);
         }

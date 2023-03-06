@@ -8,11 +8,10 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.cloud.kms.v1.KeyManagementServiceSettings;
 import org.apache.sshd.agent.SshAgentFactory;
-import org.junit.jupiter.params.provider.Arguments;
+import org.testng.annotations.DataProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.stream.Stream;
 
 import static com.antonzhdanov.apache.sshd.agent.cloud.TestUtils.readEnv;
 import static com.antonzhdanov.apache.sshd.agent.cloud.signature.BuiltInSignatureAlgorithm.ECDSA_SHA_256;
@@ -27,15 +26,16 @@ public class GoogleIntegrationTest extends AbstractIntegrationTest<GoogleCloudKe
     private static final String GOOGLE_LOCATION = "GOOGLE_LOCATION";
 
     @Override
-    protected Stream<Arguments> testData() {
-        return Stream.of(
-                Arguments.of("RSA-2048-SHA256.pub", createKeyInfo("RSA-2048-SHA256", RSA_PCKS1_V15_SHA256)),
-                Arguments.of("RSA-3072-SHA256.pub", createKeyInfo("RSA-3072-SHA256-1", RSA_PCKS1_V15_SHA256)),
-                Arguments.of("RSA-4096-SHA256.pub", createKeyInfo("RSA-4096-SHA256", RSA_PCKS1_V15_SHA256)),
-                Arguments.of("RSA-4096-SHA512.pub", createKeyInfo("RSA-4096-SHA512", RSA_PCKS1_V15_SHA512)),
-                Arguments.of("ECDSA-256.pub", createKeyInfo("ECDSA-256", ECDSA_SHA_256)),
-                Arguments.of("ECDSA-384.pub", createKeyInfo("ECDSA-384", ECDSA_SHA_384))
-        );
+    @DataProvider(parallel = true)
+    protected Object[][] testData() {
+        return new Object[][]{
+                {"RSA-2048-SHA256.pub", createKeyInfo("RSA-2048-SHA256", RSA_PCKS1_V15_SHA256)},
+                {"RSA-3072-SHA256.pub", createKeyInfo("RSA-3072-SHA256-1", RSA_PCKS1_V15_SHA256)},
+                {"RSA-4096-SHA256.pub", createKeyInfo("RSA-4096-SHA256", RSA_PCKS1_V15_SHA256)},
+                {"RSA-4096-SHA512.pub", createKeyInfo("RSA-4096-SHA512", RSA_PCKS1_V15_SHA512)},
+                {"ECDSA-256.pub", createKeyInfo("ECDSA-256", ECDSA_SHA_256)},
+                {"ECDSA-384.pub", createKeyInfo("ECDSA-384", ECDSA_SHA_384)}
+        };
     }
 
     @Override
