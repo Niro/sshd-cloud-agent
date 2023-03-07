@@ -32,10 +32,10 @@ import software.amazon.awssdk.services.kms.KmsClient;
 
 public class SetupExample {
     
-    // You should have SshClient and KeyManagementServiceClient
-    public void configureSshClient(SshClient sshClient, KeyManagementServiceClient kmsClient) {
-        // Using factory method 'of' pass instance of GoogleCloudSshAgentProvider
-        CloudSshAgentFactory<AwsCloudKeyInfo> sshAgentFactory = SingleCloudSshAgentFactory.of(new GoogleCloudSshAgentProvider(kmsClient));
+    // You should have SshClient and KmsClient
+    public void configureSshClient(SshClient sshClient, KmsClient kmsClient) {
+        // Using factory method 'of' to pass instance of AwsCloudSshAgentProvider
+        CloudSshAgentFactory<AwsCloudKeyInfo> sshAgentFactory = SingleCloudSshAgentFactory.of(new AwsCloudSshAgentProvider(kmsClient));
 
         // Assign created factory to SshClient
         sshClient.setAgentFactory(sshAgentFactory);
@@ -48,22 +48,20 @@ public class SetupExample {
 ```java
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
 import com.antonzhdanov.apache.sshd.agent.cloud.aws.AwsCloudKeyInfo;
-import com.antonzhdanov.apache.sshd.agent.cloud.google.GoogleCloudKeyInfo;
 
 public class AuthExample {
     public void connectAndAuth(CloudSshAgentFactory<AwsCloudKeyInfo> agentFactory,
                                SshClient sshClient, String user, String host, int port) {
 
-        // Fill needed data. Also set predefined signature algorithm used at key creation process
-        CloudKeyInfo googleManagedKeyInfo = GoogleCloudKeyInfo.builder().build();
+        CloudKeyInfo awsKmsManagedKeyInfo = new AwsCloudKeyInfo("KEY-ID");
 
         // First create session for given user, host and port
         try (ClientSession session = sshClient.connect(user, host, port)
                 .verify(Duration.ofSeconds(5)).getSession()) {
-
-            // Tell CloudSshAgentFactory that you are going to authorize with googleManagedKeyInfo within session
+            
+            // Tell CloudSshAgentFactory that you are going to authorize with awsKmsManagedKeyInfo within session
             // CloudSshAgentFactory#withKeyInfo returns AutoCloseable. Use it to clear useless data after auth
-            try (var unused = agentFactory.withKeyInfo(session, googleManagedKeyInfo)) {
+            try (var unused = agentFactory.withKeyInfo(session, awsKmsManagedKeyInfo)) {
                 session.auth().verify(Duration.ofSeconds(10));
             }
         }
@@ -72,5 +70,5 @@ public class AuthExample {
 ```
 
 See also:
-* [GoogleIntegrationTest](..%2Fsshd-cloud-agent-test%2Fsrc%2Ftest%2Fjava%2Fcom%2Fantonzhdanov%2Fapache%2Fsshd%2Fagent%2Fcloud%2Fgoogle%2FGoogleIntegrationTest.java)
+* [AwsIntegrationTest](..%2Fsshd-cloud-agent-test%2Fsrc%2Ftest%2Fjava%2Fcom%2Fantonzhdanov%2Fapache%2Fsshd%2Fagent%2Fcloud%2Faws%2FAwsIntegrationTest.java)
 * [AbstractIntegrationTest](..%2Fsshd-cloud-agent-test%2Fsrc%2Ftest%2Fjava%2Fcom%2Fantonzhdanov%2Fapache%2Fsshd%2Fagent%2Fcloud%2FAbstractIntegrationTest.java)
