@@ -1,44 +1,31 @@
 package com.antonzhdanov.apache.sshd.agent;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
-import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKey;
 import com.antonzhdanov.apache.sshd.agent.cloud.PublicKeyLoader;
-import com.antonzhdanov.apache.sshd.agent.cloud.exception.CloudSshAgentException;
 import com.antonzhdanov.apache.sshd.agent.cloud.Signer;
+import com.antonzhdanov.apache.sshd.agent.cloud.exception.CloudSshAgentException;
+import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKey;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignatureAlgorithm;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignatureAlgorithmMapper;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignaturePostProcessor;
 import org.apache.sshd.agent.SshAgent;
 import org.apache.sshd.agent.SshAgentKeyConstraint;
-import org.apache.sshd.common.SshException;
 import org.apache.sshd.common.session.SessionContext;
-import org.apache.sshd.common.util.buffer.Buffer;
-import org.apache.sshd.common.util.buffer.ByteArrayBuffer;
-import org.apache.sshd.common.util.io.der.DERParser;
-import org.apache.sshd.common.util.logging.AbstractLoggingBean;
 
-import java.io.IOException;
-import java.io.StreamCorruptedException;
-import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.PublicKey;
-import java.security.interfaces.ECPublicKey;
 import java.util.AbstractMap;
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Objects.requireNonNull;
 
-public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean implements SshAgent {
+public class CloudSshAgent<K extends CloudKeyInfo> implements SshAgent {
 
     private final Signer<K> signer;
     private final PublicKeyLoader<K> publicKeyLoader;
     private final SignaturePostProcessor signaturePostProcessor;
     private final K keyInfo;
     private final SignatureAlgorithmMapper<SignatureAlgorithm, String> signatureAlgorithmMapper;
-
-    private final AtomicBoolean publicKeyLoaded = new AtomicBoolean(false);
-    private CloudPublicKey<K, ? extends PublicKey> cloudPublicKey;
 
     public CloudSshAgent(Signer<K> signer,
                          PublicKeyLoader<K> publicKeyLoader,
@@ -53,29 +40,35 @@ public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean i
     }
 
     @Override
-    public Iterable<PublicKeyWithComment> getIdentities() throws IOException {
+    public Iterable<PublicKeyWithComment> getIdentities() {
         try {
-            init();
+            CloudPublicKey<K, PublicKey> cloudPublicKey = publicKeyLoader.loadPublicKey(keyInfo);
+
+            return Collections.singleton(new PublicKeyWithComment(cloudPublicKey, cloudPublicKey.getCloudKeyInfo().getComment()));
         } catch (Exception exc) {
-            throw new SshException("Error collecting public keys from cloud platform", exc);
+            throw new CloudSshAgentException("Unable to load public key with " + publicKeyLoader.getClass().getName(), exc);
         }
-
-        requireNonNull(cloudPublicKey, "Public key is not loaded");
-
-        return Collections.singleton(new PublicKeyWithComment(cloudPublicKey, cloudPublicKey.getCloudKeyInfo().getComment()));
     }
 
     @Override
-    public SignatureWithAlgorithm sign(SessionContext session, PublicKey key, String algo, byte[] data) throws IOException {
+    public SignatureWithAlgorithm sign(SessionContext session, PublicKey key, String algo, byte[] data) {
+        if (!(key instanceof CloudPublicKey)) {
+            throw new CloudSshAgentException("This agent supports only cloud key, given key is " +
+                    key.getClass().getName());
+        }
+
         if (!signer.supports(key)) {
-            throw new CloudSshAgentException("Unsupported cloud key");
+            throw new CloudSshAgentException("Current signer " +
+                    signer.getClass().getName() +
+                    " is not supports given key " +
+                    key.getClass().getName());
         }
 
         try {
             @SuppressWarnings("unchecked")
-            CloudPublicKey<K, ? extends PublicKey> cloudPublicKey = (CloudPublicKey<K, ? extends PublicKey>) key;
+            CloudPublicKey<K, PublicKey> cloudPublicKey = (CloudPublicKey<K, PublicKey>) key;
             SignatureAlgorithm signatureAlgorithm = signatureAlgorithmMapper.map(algo)
-                    .orElseThrow(() -> new UnsupportedOperationException("Unknown signature algorithm " + algo));
+                    .orElseThrow(() -> new CloudSshAgentException("Unknown signature algorithm " + algo));
 
             byte[] signature = signer.sign(data, cloudPublicKey.getCloudKeyInfo(), signatureAlgorithm);
 
@@ -110,20 +103,6 @@ public class CloudSshAgent<K extends CloudKeyInfo> extends AbstractLoggingBean i
     @Override
     public void close() {
 
-    }
-
-    private void init() {
-        if (!publicKeyLoaded.get()) {
-            synchronized (this) {
-                if (publicKeyLoaded.compareAndSet(false, true)) {
-                    try {
-                        cloudPublicKey = publicKeyLoader.loadPublicKey(keyInfo);
-                    } catch (Exception exc) {
-                        throw new RuntimeException(exc);
-                    }
-                }
-            }
-        }
     }
 
     private static class PublicKeyWithComment extends AbstractMap.SimpleImmutableEntry<PublicKey, String> {

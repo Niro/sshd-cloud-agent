@@ -1,10 +1,6 @@
-package com.antonzhdanov.apache.sshd.agent.cloud;
+package com.antonzhdanov.apache.sshd.agent.cloud.key;
 
-import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
-import com.antonzhdanov.apache.sshd.agent.cloud.key.EcCloudPublicKey;
-import com.antonzhdanov.apache.sshd.agent.cloud.key.PublicKeyFactory;
-import com.antonzhdanov.apache.sshd.agent.cloud.key.RsaCloudPublicKey;
-import com.antonzhdanov.apache.sshd.agent.cloud.key.TestCloudKeyInfo;
+import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
 import org.apache.sshd.common.cipher.ECCurves;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -24,9 +20,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 public class CloudPublicKeyFactoryTest {
-
-    private static final TestCloudKeyInfo KEY_INFO = new TestCloudKeyInfo("ID");
-
+    
     @DataProvider
     public Object[][] keyProvider() {
         return new Object[][]{
@@ -39,17 +33,18 @@ public class CloudPublicKeyFactoryTest {
     public void testCreateFromPem(PublicKey publicKey, Class<PublicKey> instanceOf) {
         // GIVEN
         PublicKeyFactory publicKeyFactory = mock(PublicKeyFactory.class);
-        CloudPublicKeyFactory<TestCloudKeyInfo> cloudPublicKeyFactory = new CloudPublicKeyFactory<>(publicKeyFactory);
+        CloudPublicKeyFactory<CloudKeyInfo> cloudPublicKeyFactory = new CloudPublicKeyFactory<>(publicKeyFactory);
+        CloudKeyInfo keyInfo = mock(CloudKeyInfo.class);
 
         String pem = "PEM";
         when(publicKeyFactory.create(eq(pem))).thenReturn(publicKey);
 
         // WHEN
-        CloudPublicKey<TestCloudKeyInfo, PublicKey> cloudPublicKey = cloudPublicKeyFactory.create(pem, KEY_INFO);
+        CloudPublicKey<CloudKeyInfo, PublicKey> cloudPublicKey = cloudPublicKeyFactory.create(pem, keyInfo);
 
         // THEN
         assertTrue(instanceOf.isAssignableFrom(cloudPublicKey.getClass()));
-        assertEquals(cloudPublicKey.getCloudKeyInfo(), KEY_INFO);
+        assertEquals(cloudPublicKey.getCloudKeyInfo(), keyInfo);
         assertEquals(cloudPublicKey.getPublicKey(), publicKey);
         verify(publicKeyFactory, times(1)).create(eq(pem));
         verifyNoMoreInteractions(publicKeyFactory);
@@ -59,17 +54,18 @@ public class CloudPublicKeyFactoryTest {
     public void testCreateFromBytes(PublicKey publicKey, Class<PublicKey> instanceOf) {
         // GIVEN
         PublicKeyFactory publicKeyFactory = mock(PublicKeyFactory.class);
-        CloudPublicKeyFactory<TestCloudKeyInfo> cloudPublicKeyFactory = new CloudPublicKeyFactory<>(publicKeyFactory);
+        CloudPublicKeyFactory<CloudKeyInfo> cloudPublicKeyFactory = new CloudPublicKeyFactory<>(publicKeyFactory);
+        CloudKeyInfo keyInfo = mock(CloudKeyInfo.class);
 
         byte[] bytes = new byte[0];
         when(publicKeyFactory.create(eq(bytes))).thenReturn(publicKey);
 
         // WHEN
-        CloudPublicKey<TestCloudKeyInfo, PublicKey> cloudPublicKey = cloudPublicKeyFactory.create(bytes, KEY_INFO);
+        CloudPublicKey<CloudKeyInfo, PublicKey> cloudPublicKey = cloudPublicKeyFactory.create(bytes, keyInfo);
 
         // THEN
         assertTrue(instanceOf.isAssignableFrom(cloudPublicKey.getClass()));
-        assertEquals(cloudPublicKey.getCloudKeyInfo(), KEY_INFO);
+        assertEquals(cloudPublicKey.getCloudKeyInfo(), keyInfo);
         assertEquals(cloudPublicKey.getPublicKey(), publicKey);
         verify(publicKeyFactory, times(1)).create(eq(bytes));
         verifyNoMoreInteractions(publicKeyFactory);
@@ -79,7 +75,8 @@ public class CloudPublicKeyFactoryTest {
     public void testCreateFromRsaParams() {
         // GIVEN
         PublicKeyFactory publicKeyFactory = mock(PublicKeyFactory.class);
-        CloudPublicKeyFactory<TestCloudKeyInfo> cloudPublicKeyFactory = new CloudPublicKeyFactory<>(publicKeyFactory);
+        CloudPublicKeyFactory<CloudKeyInfo> cloudPublicKeyFactory = new CloudPublicKeyFactory<>(publicKeyFactory);
+        CloudKeyInfo keyInfo = mock(CloudKeyInfo.class);
 
         BigInteger modulus = BigInteger.ONE;
         BigInteger exponent = BigInteger.TWO;
@@ -87,11 +84,11 @@ public class CloudPublicKeyFactoryTest {
         when(publicKeyFactory.create(eq(modulus), eq(exponent))).thenReturn(publicKey);
 
         // WHEN
-        CloudPublicKey<TestCloudKeyInfo, PublicKey> cloudPublicKey = cloudPublicKeyFactory.create(modulus, exponent, KEY_INFO);
+        CloudPublicKey<CloudKeyInfo, PublicKey> cloudPublicKey = cloudPublicKeyFactory.create(modulus, exponent, keyInfo);
 
         // THEN
         assertTrue(cloudPublicKey instanceof RsaCloudPublicKey);
-        assertEquals(cloudPublicKey.getCloudKeyInfo(), KEY_INFO);
+        assertEquals(cloudPublicKey.getCloudKeyInfo(), keyInfo);
         assertEquals(cloudPublicKey.getPublicKey(), publicKey);
         verify(publicKeyFactory, times(1)).create(eq(modulus), eq(exponent));
         verifyNoMoreInteractions(publicKeyFactory);
@@ -101,7 +98,8 @@ public class CloudPublicKeyFactoryTest {
     public void testCreateFromEcParams() {
         // GIVEN
         PublicKeyFactory publicKeyFactory = mock(PublicKeyFactory.class);
-        CloudPublicKeyFactory<TestCloudKeyInfo> cloudPublicKeyFactory = new CloudPublicKeyFactory<>(publicKeyFactory);
+        CloudPublicKeyFactory<CloudKeyInfo> cloudPublicKeyFactory = new CloudPublicKeyFactory<>(publicKeyFactory);
+        CloudKeyInfo keyInfo = mock(CloudKeyInfo.class);
 
         BigInteger x = BigInteger.ONE;
         BigInteger y = BigInteger.TWO;
@@ -110,11 +108,11 @@ public class CloudPublicKeyFactoryTest {
         when(publicKeyFactory.create(eq(x), eq(y), eq(ecCurve))).thenReturn(publicKey);
 
         // WHEN
-        CloudPublicKey<TestCloudKeyInfo, PublicKey> cloudPublicKey = cloudPublicKeyFactory.create(x, y, ecCurve, KEY_INFO);
+        CloudPublicKey<CloudKeyInfo, PublicKey> cloudPublicKey = cloudPublicKeyFactory.create(x, y, ecCurve, keyInfo);
 
         // THEN
         assertTrue(cloudPublicKey instanceof ECPublicKey);
-        assertEquals(cloudPublicKey.getCloudKeyInfo(), KEY_INFO);
+        assertEquals(cloudPublicKey.getCloudKeyInfo(), keyInfo);
         assertEquals(cloudPublicKey.getPublicKey(), publicKey);
         verify(publicKeyFactory, times(1)).create(eq(x), eq(y), eq(ecCurve));
         verifyNoMoreInteractions(publicKeyFactory);

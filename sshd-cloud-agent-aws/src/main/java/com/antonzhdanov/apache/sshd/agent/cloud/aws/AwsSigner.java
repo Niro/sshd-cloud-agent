@@ -1,22 +1,20 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.aws;
 
-import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKey;
+import com.antonzhdanov.apache.sshd.agent.cloud.AbstractSigner;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignatureAlgorithm;
-import com.antonzhdanov.apache.sshd.agent.cloud.Signer;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.SignRequest;
 
-import java.security.PublicKey;
-
 import static java.util.Objects.requireNonNull;
 
-public class AwsSigner implements Signer<AwsCloudKeyInfo> {
+public class AwsSigner extends AbstractSigner<AwsCloudKeyInfo> {
 
     private final KmsClient kmsClient;
     private final AwsSignatureAlgorithmMapper signatureAlgorithmMapper;
 
     public AwsSigner(KmsClient kmsClient, AwsSignatureAlgorithmMapper signatureAlgorithmMapper) {
+        super(AwsCloudKeyInfo.class);
         this.kmsClient = requireNonNull(kmsClient, "kmsClient");
         this.signatureAlgorithmMapper = requireNonNull(signatureAlgorithmMapper, "signatureAlgorithmMapper");
     }
@@ -30,14 +28,5 @@ public class AwsSigner implements Signer<AwsCloudKeyInfo> {
                 .build();
 
         return kmsClient.sign(request).signature().asByteArray();
-    }
-
-    @Override
-    public boolean supports(PublicKey publicKey) {
-        if (publicKey instanceof CloudPublicKey) {
-            return ((CloudPublicKey<?, ?>) publicKey).getCloudKeyInfo().getClass() == AwsCloudKeyInfo.class;
-        }
-
-        return false;
     }
 }

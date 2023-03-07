@@ -11,7 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 
 @Test
-public class JwaSignaturePostProcessorTest {
+public class JsonWebSignaturePostProcessorTest {
 
     private static final String LENGTH64_SIG = "eTsGRyjzW+3jM1l6+6K4JQ8Y3xd26FgH+yFNTKyLTS4ZN2b8LGD0ssXcogI3lDMIMz0SoFl32Lol0XrI4rBjuQ==";
     private static final String LENGTH96_SIG = "8D7Ze/usy5+fBzJZmGEFFTJkIx1q2G8r9Ka9S7UvtBKqW5y8WX7wH7akONMylshuKUTfs5M1bzcD/VY5jdTrxJkNTB6lrDbU7My/ZzN2vC309SC79qJpNTPG+hosXB5x";
@@ -35,7 +35,7 @@ public class JwaSignaturePostProcessorTest {
         byte[] signature = new byte[0];
         RSAPublicKey publicKey = mock(RSAPublicKey.class);
 
-        JwaSignaturePostProcessor signaturePostProcessor = new JwaSignaturePostProcessor();
+        JsonWebSignaturePostProcessor signaturePostProcessor = new JsonWebSignaturePostProcessor();
 
         // WHEN
         byte[] postProcessedSignature = signaturePostProcessor.postProcessSignature(signature, publicKey);
@@ -47,7 +47,7 @@ public class JwaSignaturePostProcessorTest {
     @Test(dataProvider = "signatureDataProvider")
     public void testEcJwaSignatureProcessed(byte[] jwaSignature, byte[] expected) {
         // GIVEN
-        JwaSignaturePostProcessor signaturePostProcessor = new JwaSignaturePostProcessor();
+        JsonWebSignaturePostProcessor signaturePostProcessor = new JsonWebSignaturePostProcessor();
         ECPublicKey publicKey = mock(ECPublicKey.class);
 
         // WHEN

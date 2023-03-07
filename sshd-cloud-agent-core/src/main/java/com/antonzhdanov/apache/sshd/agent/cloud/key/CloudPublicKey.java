@@ -1,4 +1,6 @@
-package com.antonzhdanov.apache.sshd.agent.cloud;
+package com.antonzhdanov.apache.sshd.agent.cloud.key;
+
+import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
 
 import java.security.PublicKey;
 

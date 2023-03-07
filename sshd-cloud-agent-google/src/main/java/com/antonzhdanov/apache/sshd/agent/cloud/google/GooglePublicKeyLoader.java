@@ -1,8 +1,8 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.google;
 
-import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKey;
-import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.PublicKeyLoader;
+import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKey;
+import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.cloud.kms.v1.PublicKey;
 

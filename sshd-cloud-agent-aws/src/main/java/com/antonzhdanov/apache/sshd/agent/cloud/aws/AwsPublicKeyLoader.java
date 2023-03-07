@@ -1,8 +1,8 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.aws;
 
-import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKey;
-import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.PublicKeyLoader;
+import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKey;
+import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.GetPublicKeyRequest;
 import software.amazon.awssdk.services.kms.model.GetPublicKeyResponse;
@@ -22,7 +22,7 @@ public class AwsPublicKeyLoader implements PublicKeyLoader<AwsCloudKeyInfo> {
     }
 
     @Override
-    public CloudPublicKey<AwsCloudKeyInfo, ? extends PublicKey> loadPublicKey(AwsCloudKeyInfo keyInfo) {
+    public CloudPublicKey<AwsCloudKeyInfo, PublicKey> loadPublicKey(AwsCloudKeyInfo keyInfo) {
         GetPublicKeyRequest request = GetPublicKeyRequest.builder().keyId(keyInfo.getKeyId()).build();
         GetPublicKeyResponse response = kmsClient.getPublicKey(request);
 

@@ -1,21 +1,12 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.key;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
-import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKey;
-import com.antonzhdanov.apache.sshd.agent.cloud.key.EcCloudPublicKey;
-import com.antonzhdanov.apache.sshd.agent.cloud.key.PublicKeyFactory;
-import com.antonzhdanov.apache.sshd.agent.cloud.key.RsaCloudPublicKey;
 import org.apache.sshd.common.cipher.ECCurves;
 
 import java.math.BigInteger;
-import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.ECPoint;
-import java.security.spec.ECPublicKeySpec;
-import java.security.spec.KeySpec;
-import java.security.spec.RSAPublicKeySpec;
 import java.util.Objects;
 
 @SuppressWarnings("unchecked")

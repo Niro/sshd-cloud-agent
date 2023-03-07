@@ -1,8 +1,8 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.azure;
 
-import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKey;
-import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.PublicKeyLoader;
+import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKey;
+import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
 import com.azure.security.keyvault.keys.cryptography.CryptographyClient;
 import com.azure.security.keyvault.keys.models.JsonWebKey;
 import com.azure.security.keyvault.keys.models.KeyCurveName;
@@ -27,7 +27,7 @@ public class AzurePublicKeyLoader implements PublicKeyLoader<AzureCloudKeyInfo> 
     }
 
     @Override
-    public CloudPublicKey<AzureCloudKeyInfo, ? extends PublicKey> loadPublicKey(AzureCloudKeyInfo keyInfo) {
+    public CloudPublicKey<AzureCloudKeyInfo, PublicKey> loadPublicKey(AzureCloudKeyInfo keyInfo) {
         CryptographyClient client = cryptographyClientProvider.getClientForKey(keyInfo);
 
         requireNonNull(client, cryptographyClientProvider.getClass().getName() + " didn't provide instance of " + CryptographyClient.class.getName());
@@ -43,14 +43,14 @@ public class AzurePublicKeyLoader implements PublicKeyLoader<AzureCloudKeyInfo> 
         }
     }
 
-    private CloudPublicKey<AzureCloudKeyInfo, ? extends PublicKey> mapRsaKey(JsonWebKey jsonWebKey, AzureCloudKeyInfo keyInfo) {
+    private CloudPublicKey<AzureCloudKeyInfo, PublicKey> mapRsaKey(JsonWebKey jsonWebKey, AzureCloudKeyInfo keyInfo) {
         BigInteger modulus = new BigInteger(1, jsonWebKey.getN());
         BigInteger publicExponent = new BigInteger(jsonWebKey.getE());
 
         return cloudPublicKeyFactory.create(modulus, publicExponent, keyInfo);
     }
 
-    private CloudPublicKey<AzureCloudKeyInfo, ? extends PublicKey> mapEcKey(JsonWebKey jsonWebKey, AzureCloudKeyInfo keyInfo) {
+    private CloudPublicKey<AzureCloudKeyInfo, PublicKey> mapEcKey(JsonWebKey jsonWebKey, AzureCloudKeyInfo keyInfo) {
         BigInteger x = new BigInteger(1, jsonWebKey.getX());
         BigInteger y = new BigInteger(1, jsonWebKey.getY());
         ECCurves ecCurve;

@@ -1,7 +1,6 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.key;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
-import com.antonzhdanov.apache.sshd.agent.cloud.CloudPublicKey;
 
 import java.math.BigInteger;
 import java.security.interfaces.RSAPublicKey;

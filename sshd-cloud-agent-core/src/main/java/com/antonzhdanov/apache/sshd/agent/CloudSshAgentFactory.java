@@ -12,6 +12,7 @@ import org.apache.sshd.common.session.Session;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Objects.requireNonNull;
@@ -36,7 +37,9 @@ public class CloudSshAgentFactory<K extends CloudKeyInfo> implements SshAgentFac
 
     @Override
     public SshAgent createClient(Session session, FactoryManager manager) {
-        return sshAgentProvider.create(session, keyInfosPerSession.get(session));
+        K keyInfo = Optional.ofNullable(keyInfosPerSession.get(session)).orElseThrow();
+
+        return sshAgentProvider.create(session, keyInfo);
     }
 
     @Override
@@ -44,9 +47,17 @@ public class CloudSshAgentFactory<K extends CloudKeyInfo> implements SshAgentFac
         throw new UnsupportedOperationException();
     }
 
-    public AutoCloseable addKeyInfoForSession(Session session, K keyInfo) {
+    public NoExceptionAutoCloseable withKeyInfo(Session session, K keyInfo) {
+        requireNonNull(session);
+        requireNonNull(keyInfo);
+
         keyInfosPerSession.put(session, keyInfo);
 
         return () -> keyInfosPerSession.remove(session);
+    }
+
+    public interface NoExceptionAutoCloseable extends AutoCloseable {
+        @Override
+        void close();
     }
 }

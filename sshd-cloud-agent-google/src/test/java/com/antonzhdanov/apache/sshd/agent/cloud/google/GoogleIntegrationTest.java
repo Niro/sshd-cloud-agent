@@ -8,7 +8,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.cloud.kms.v1.KeyManagementServiceSettings;
 import lombok.SneakyThrows;
-import org.apache.sshd.agent.SshAgentFactory;
 import org.testng.annotations.DataProvider;
 
 import java.io.ByteArrayInputStream;

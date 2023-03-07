@@ -8,7 +8,7 @@ import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
 
-public class JwaSignaturePostProcessor implements SignaturePostProcessor {
+public class JsonWebSignaturePostProcessor implements SignaturePostProcessor {
     @Override
     public byte[] postProcessSignature(byte[] signature, PublicKey publicKey) {
         if (publicKey instanceof ECPublicKey) {

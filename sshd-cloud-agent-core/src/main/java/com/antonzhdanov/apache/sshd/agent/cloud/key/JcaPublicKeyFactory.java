@@ -1,5 +1,6 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.key;
 
+import com.antonzhdanov.apache.sshd.agent.cloud.exception.CloudSshAgentException;
 import lombok.SneakyThrows;
 import org.apache.sshd.common.cipher.ECCurves;
 import org.apache.sshd.common.util.io.der.ASN1Object;
@@ -88,7 +89,7 @@ public class JcaPublicKeyFactory implements PublicKeyFactory {
                 }
             }
         } catch (Exception exc) {
-            throw new RuntimeException(exc.getMessage());
+            throw new CloudSshAgentException(exc.getMessage());
         }
 
         switch (oid) {

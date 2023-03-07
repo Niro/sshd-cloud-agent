@@ -10,9 +10,3 @@ SSHD extension for client auth using SSH Key from cloud
 - [ ] Yandex - no API for asymmetric sign?
 - [ ] Alibaba
 - [ ] Tencent Cloud
-
-## TODO
-
-- [ ] Better excpetion handling
-- [ ] Logs
-- [ ] Java doc

@@ -39,7 +39,7 @@ public abstract class AbstractIntegrationTest<K extends CloudKeyInfo> {
 
             try (ClientSession session = sshClient.connect("user", "localhost", container.getFirstMappedPort())
                     .verify(Duration.ofSeconds(5)).getSession()) {
-                try (AutoCloseable autoCloseable = cloudFactory.addKeyInfoForSession(session, keyInfo)) {
+                try (var unused = cloudFactory.withKeyInfo(session, keyInfo)) {
                     session.auth().verify(Duration.ofSeconds(10));
                 }
 
