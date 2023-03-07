@@ -1,9 +1,9 @@
 package com.antonzhdanov.apache.sshd.agent;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
+import com.antonzhdanov.apache.sshd.agent.cloud.CloudProvider;
 import org.apache.sshd.common.session.Session;
 
-@FunctionalInterface
 public interface CloudSshAgentProvider<K extends CloudKeyInfo> {
 
     /**
@@ -14,4 +14,6 @@ public interface CloudSshAgentProvider<K extends CloudKeyInfo> {
      * @return cloud specific SSH Agent
      */
     CloudSshAgent<K> create(Session session, K keyInfo);
+
+    CloudProvider getCloudProvider();
 }

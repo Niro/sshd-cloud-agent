@@ -1,6 +1,7 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.google;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
+import com.antonzhdanov.apache.sshd.agent.cloud.CloudProvider;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignatureAlgorithm;
 import com.google.cloud.kms.v1.CryptoKeyVersionName;
 import lombok.Builder;
@@ -58,6 +59,11 @@ public class GoogleCloudKeyInfo implements CloudKeyInfo {
     @Override
     public String getComment() {
         return String.format(KEY_COMMENT_FORMAT, project, location, keyRing, cryptoKey, cryptoKeyVersion);
+    }
+
+    @Override
+    public CloudProvider getCloudProvider() {
+        return GoogleCloudProvider.INSTANCE;
     }
 
     public CryptoKeyVersionName toCryptoKeyVersionName() {

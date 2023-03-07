@@ -1,6 +1,7 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.azure;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
+import com.antonzhdanov.apache.sshd.agent.cloud.CloudProvider;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,5 +19,10 @@ public class AzureCloudKeyInfo implements CloudKeyInfo {
     @Override
     public String getComment() {
         return "Azure " + keyId;
+    }
+
+    @Override
+    public CloudProvider getCloudProvider() {
+        return AzureCloudProvider.INSTANCE;
     }
 }

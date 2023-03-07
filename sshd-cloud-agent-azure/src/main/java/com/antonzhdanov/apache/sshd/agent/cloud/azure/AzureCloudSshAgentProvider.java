@@ -2,6 +2,7 @@ package com.antonzhdanov.apache.sshd.agent.cloud.azure;
 
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgent;
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgentProvider;
+import com.antonzhdanov.apache.sshd.agent.cloud.CloudProvider;
 import com.antonzhdanov.apache.sshd.agent.cloud.azure.signature.JsonWebSignaturePostProcessor;
 import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.key.JcaPublicKeyFactory;
@@ -27,5 +28,10 @@ public class AzureCloudSshAgentProvider implements CloudSshAgentProvider<AzureCl
                 keyInfo,
                 new SshdSignatureAlgorithmMapper()
         );
+    }
+
+    @Override
+    public CloudProvider getCloudProvider() {
+        return AzureCloudProvider.INSTANCE;
     }
 }

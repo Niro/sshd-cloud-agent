@@ -1,6 +1,7 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.aws;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
+import com.antonzhdanov.apache.sshd.agent.cloud.CloudProvider;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,5 +20,10 @@ public class AwsCloudKeyInfo implements CloudKeyInfo {
     @Override
     public String getComment() {
         return "AWS " + keyId;
+    }
+
+    @Override
+    public CloudProvider getCloudProvider() {
+        return AwsCloudProvider.INSTANCE;
     }
 }

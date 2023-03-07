@@ -5,58 +5,22 @@ import org.apache.sshd.agent.SshAgent;
 import org.apache.sshd.agent.SshAgentFactory;
 import org.apache.sshd.agent.SshAgentServer;
 import org.apache.sshd.common.FactoryManager;
-import org.apache.sshd.common.channel.ChannelFactory;
 import org.apache.sshd.common.session.ConnectionService;
 import org.apache.sshd.common.session.Session;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.IOException;
 
-import static java.util.Objects.requireNonNull;
-
-public class CloudSshAgentFactory<K extends CloudKeyInfo> implements SshAgentFactory {
-
-    private final CloudSshAgentProvider<K> sshAgentProvider;
-    private final Map<Session, K> keyInfosPerSession = new ConcurrentHashMap<>();
-
-    private CloudSshAgentFactory(CloudSshAgentProvider<K> sshAgentProvider) {
-        this.sshAgentProvider = requireNonNull(sshAgentProvider, "sshAgentProvider");
-    }
-
-    public static <T extends CloudKeyInfo> CloudSshAgentFactory<T> of(CloudSshAgentProvider<T> agentProvider) {
-        return new CloudSshAgentFactory<>(agentProvider);
-    }
+public interface CloudSshAgentFactory<K extends CloudKeyInfo> extends SshAgentFactory {
 
     @Override
-    public List<ChannelFactory> getChannelForwardingFactories(FactoryManager manager) {
-        return Collections.emptyList();
-    }
+    SshAgentServer createServer(ConnectionService service);
 
     @Override
-    public SshAgent createClient(Session session, FactoryManager manager) {
-        K keyInfo = Optional.ofNullable(keyInfosPerSession.get(session)).orElseThrow();
+    SshAgent createClient(Session session, FactoryManager manager);
 
-        return sshAgentProvider.create(session, keyInfo);
-    }
+    NoExceptionAutoCloseable withKeyInfo(Session session, K keyInfo);
 
-    @Override
-    public SshAgentServer createServer(ConnectionService service) {
-        throw new UnsupportedOperationException();
-    }
-
-    public NoExceptionAutoCloseable withKeyInfo(Session session, K keyInfo) {
-        requireNonNull(session);
-        requireNonNull(keyInfo);
-
-        keyInfosPerSession.put(session, keyInfo);
-
-        return () -> keyInfosPerSession.remove(session);
-    }
-
-    public interface NoExceptionAutoCloseable extends AutoCloseable {
+    interface NoExceptionAutoCloseable extends AutoCloseable {
         @Override
         void close();
     }

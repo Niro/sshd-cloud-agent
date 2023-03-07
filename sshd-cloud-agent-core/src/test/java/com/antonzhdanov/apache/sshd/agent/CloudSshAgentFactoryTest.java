@@ -30,7 +30,7 @@ public class CloudSshAgentFactoryTest {
 
     public void testEmptyChannelForwardingFactories() {
         // GIVEN
-        CloudSshAgentFactory<CloudKeyInfo> sshAgentFactory = CloudSshAgentFactory.of(mock(CloudSshAgentProvider.class));
+        CloudSshAgentFactory<CloudKeyInfo> sshAgentFactory = SingleCloudSshAgentFactory.of(mock(CloudSshAgentProvider.class));
 
         // WHEN
         List<ChannelFactory> channelForwardingFactories = sshAgentFactory.getChannelForwardingFactories(mock(FactoryManager.class));
@@ -42,7 +42,7 @@ public class CloudSshAgentFactoryTest {
     @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testThatCreateServerIsNotSupported() {
         // GIVEN
-        CloudSshAgentFactory<CloudKeyInfo> sshAgentFactory = CloudSshAgentFactory.of(mock(CloudSshAgentProvider.class));
+        CloudSshAgentFactory<CloudKeyInfo> sshAgentFactory = SingleCloudSshAgentFactory.of(mock(CloudSshAgentProvider.class));
 
         // WHEN
         sshAgentFactory.createServer(mock(ConnectionService.class));
@@ -53,7 +53,7 @@ public class CloudSshAgentFactoryTest {
     @Test(expectedExceptions = Exception.class)
     public void testThatClientIsNotCreated() {
         // GIVEN
-        CloudSshAgentFactory<CloudKeyInfo> sshAgentFactory = CloudSshAgentFactory.of(mock(CloudSshAgentProvider.class));
+        CloudSshAgentFactory<CloudKeyInfo> sshAgentFactory = SingleCloudSshAgentFactory.of(mock(CloudSshAgentProvider.class));
 
         // WHEN
         sshAgentFactory.createClient(mock(Session.class), mock(FactoryManager.class));
@@ -64,7 +64,7 @@ public class CloudSshAgentFactoryTest {
     public void testThatClientIsCreated() {
         // GIVEN
         CloudSshAgentProvider sshAgentProvider = mock(CloudSshAgentProvider.class);
-        CloudSshAgentFactory<CloudKeyInfo> sshAgentFactory = CloudSshAgentFactory.of(sshAgentProvider);
+        CloudSshAgentFactory<CloudKeyInfo> sshAgentFactory = SingleCloudSshAgentFactory.of(sshAgentProvider);
         Session session = mock(Session.class);
         CloudKeyInfo keyInfo = mock(CloudKeyInfo.class);
         sshAgentFactory.withKeyInfo(session, keyInfo);
@@ -84,7 +84,7 @@ public class CloudSshAgentFactoryTest {
         // GIVEN
         Session session = mock(Session.class);
         CloudKeyInfo cloudKeyInfo = mock(CloudKeyInfo.class);
-        CloudSshAgentFactory<CloudKeyInfo> sshAgentFactory = CloudSshAgentFactory.of(mock(CloudSshAgentProvider.class));
+        CloudSshAgentFactory<CloudKeyInfo> sshAgentFactory = SingleCloudSshAgentFactory.of(mock(CloudSshAgentProvider.class));
         Map<Session, CloudKeyInfo> keyInfosPerSession = getFieldValue(sshAgentFactory, "keyInfosPerSession");
 
         // WHEN

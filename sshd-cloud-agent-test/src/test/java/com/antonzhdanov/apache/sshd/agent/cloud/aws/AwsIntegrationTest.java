@@ -1,6 +1,7 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.aws;
 
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgentFactory;
+import com.antonzhdanov.apache.sshd.agent.SingleCloudSshAgentFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.AbstractIntegrationTest;
 import org.testng.annotations.DataProvider;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -20,17 +21,17 @@ public class AwsIntegrationTest extends AbstractIntegrationTest<AwsCloudKeyInfo>
     @DataProvider(parallel = true)
     protected Object[][] testData() {
         return new Object[][] {
-                {"RSA-2048.pub", new AwsCloudKeyInfo("ecde8af1-4f4b-4ccd-be36-7a8b4409b23f")},
-                {"ECC_NIST_P256.pub", new AwsCloudKeyInfo("f827f37f-79ff-44ca-aa0c-843722df8d46")}
+                {"aws/RSA-2048.pub", new AwsCloudKeyInfo("ecde8af1-4f4b-4ccd-be36-7a8b4409b23f")},
+                {"aws/ECC_NIST_P256.pub", new AwsCloudKeyInfo("f827f37f-79ff-44ca-aa0c-843722df8d46")}
         };
     }
 
     @Override
     protected CloudSshAgentFactory<AwsCloudKeyInfo> createCloudFactory() {
-        return CloudSshAgentFactory.of(new AwsCloudSshAgentProvider(createKmsClient()));
+        return SingleCloudSshAgentFactory.of(new AwsCloudSshAgentProvider(createKmsClient()));
     }
 
-    private KmsClient createKmsClient() {
+    public static KmsClient createKmsClient() {
         String accessKeyId = readEnv(AWS_ACCESS_KEY_ID_ENVIRONMENT_PROPERTY);
         String secretAccessKey = readEnv(AWS_SECRET_ACCESS_KEY_ENVIRONMENT_PROPERTY);
         String region = readEnv(AWS_REGION_ENVIRONMENT_PROPERTY);

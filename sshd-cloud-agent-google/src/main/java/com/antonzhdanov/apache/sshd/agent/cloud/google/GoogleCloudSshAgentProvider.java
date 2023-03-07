@@ -2,6 +2,7 @@ package com.antonzhdanov.apache.sshd.agent.cloud.google;
 
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgent;
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgentProvider;
+import com.antonzhdanov.apache.sshd.agent.cloud.CloudProvider;
 import com.antonzhdanov.apache.sshd.agent.cloud.key.CloudPublicKeyFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.key.JcaPublicKeyFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.DefaultSignaturePostProcessor;
@@ -31,5 +32,10 @@ public class GoogleCloudSshAgentProvider implements CloudSshAgentProvider<Google
                 new DefaultSignaturePostProcessor(),
                 keyInfo,
                 algo -> Optional.of(keyInfo.getSignatureAlgorithm()));
+    }
+
+    @Override
+    public CloudProvider getCloudProvider() {
+        return GoogleCloudProvider.INSTANCE;
     }
 }

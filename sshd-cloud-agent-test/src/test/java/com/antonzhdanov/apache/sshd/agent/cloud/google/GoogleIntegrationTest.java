@@ -1,6 +1,7 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.google;
 
 import com.antonzhdanov.apache.sshd.agent.CloudSshAgentFactory;
+import com.antonzhdanov.apache.sshd.agent.SingleCloudSshAgentFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.AbstractIntegrationTest;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignatureAlgorithm;
 import com.google.api.gax.core.FixedCredentialsProvider;
@@ -29,28 +30,30 @@ public class GoogleIntegrationTest extends AbstractIntegrationTest<GoogleCloudKe
     @DataProvider(parallel = true)
     protected Object[][] testData() {
         return new Object[][]{
-                {"RSA-2048-SHA256.pub", createKeyInfo("RSA-2048-SHA256", RSA_PCKS1_V15_SHA256)},
-                {"RSA-3072-SHA256.pub", createKeyInfo("RSA-3072-SHA256-1", RSA_PCKS1_V15_SHA256)},
-                {"RSA-4096-SHA256.pub", createKeyInfo("RSA-4096-SHA256", RSA_PCKS1_V15_SHA256)},
-                {"RSA-4096-SHA512.pub", createKeyInfo("RSA-4096-SHA512", RSA_PCKS1_V15_SHA512)},
-                {"ECDSA-256.pub", createKeyInfo("ECDSA-256", ECDSA_SHA_256)},
-                {"ECDSA-384.pub", createKeyInfo("ECDSA-384", ECDSA_SHA_384)}
+                {"google/RSA-2048-SHA256.pub", createKeyInfo("RSA-2048-SHA256", RSA_PCKS1_V15_SHA256)},
+                {"google/RSA-3072-SHA256.pub", createKeyInfo("RSA-3072-SHA256-1", RSA_PCKS1_V15_SHA256)},
+                {"google/RSA-4096-SHA256.pub", createKeyInfo("RSA-4096-SHA256", RSA_PCKS1_V15_SHA256)},
+                {"google/RSA-4096-SHA512.pub", createKeyInfo("RSA-4096-SHA512", RSA_PCKS1_V15_SHA512)},
+                {"google/ECDSA-256.pub", createKeyInfo("ECDSA-256", ECDSA_SHA_256)},
+                {"google/ECDSA-384.pub", createKeyInfo("ECDSA-384", ECDSA_SHA_384)}
         };
     }
 
     @Override
-    @SneakyThrows
     protected CloudSshAgentFactory<GoogleCloudKeyInfo> createCloudFactory() {
+        return SingleCloudSshAgentFactory.of(new GoogleCloudSshAgentProvider(createClient()));
+    }
+
+    @SneakyThrows
+    public static KeyManagementServiceClient createClient() {
         InputStream creds = new ByteArrayInputStream(readEnv(GOOGLE_AUTH_JSON_ENV).getBytes());
         KeyManagementServiceSettings settings = KeyManagementServiceSettings.newBuilder()
                 .setCredentialsProvider(FixedCredentialsProvider.create(GoogleCredentials.fromStream(creds)))
                 .build();
-        KeyManagementServiceClient client = KeyManagementServiceClient.create(settings);
-
-        return CloudSshAgentFactory.of(new GoogleCloudSshAgentProvider(client));
+        return KeyManagementServiceClient.create(settings);
     }
 
-    private GoogleCloudKeyInfo createKeyInfo(String keyName, SignatureAlgorithm algorithm) {
+    public static GoogleCloudKeyInfo createKeyInfo(String keyName, SignatureAlgorithm algorithm) {
         return GoogleCloudKeyInfo.builder()
                 .project(readEnv(GOOGLE_PROJECT))
                 .location(readEnv(GOOGLE_LOCATION))
