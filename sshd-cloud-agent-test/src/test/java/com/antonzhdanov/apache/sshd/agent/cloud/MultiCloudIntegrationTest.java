@@ -43,7 +43,7 @@ public class MultiCloudIntegrationTest extends AbstractIntegrationTest<CloudKeyI
     }
 
     @Override
-    protected CloudSshAgentFactory<CloudKeyInfo> createCloudFactory() {
+    protected CloudSshAgentFactory<CloudKeyInfo> createCloudFactory() throws Exception {
         return MultiCloudSshAgentFactory.of(
                 Arrays.asList(
                         new AzureCloudSshAgentProvider(AzureIntegrationTest::createCryptographyClient),

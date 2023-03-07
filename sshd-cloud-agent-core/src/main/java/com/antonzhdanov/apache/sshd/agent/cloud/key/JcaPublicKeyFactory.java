@@ -1,7 +1,6 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.key;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.exception.CloudSshAgentException;
-import lombok.SneakyThrows;
 import org.apache.sshd.common.cipher.ECCurves;
 import org.apache.sshd.common.util.io.der.ASN1Object;
 import org.apache.sshd.common.util.io.der.ASN1Type;
@@ -59,9 +58,12 @@ public class JcaPublicKeyFactory implements PublicKeyFactory {
         return (ECPublicKey) create(new ECPublicKeySpec(new ECPoint(x, y), ecCurve.getParameters()), EC);
     }
 
-    @SneakyThrows
     private PublicKey create(KeySpec keySpec, String algorithm) {
-        return KeyFactory.getInstance(algorithm).generatePublic(keySpec);
+        try {
+            return KeyFactory.getInstance(algorithm).generatePublic(keySpec);
+        } catch (Exception exc) {
+            throw new CloudSshAgentException("Unable to create public key", exc);
+        }
     }
 
     private String determineAlgorithm(byte[] bytes) {

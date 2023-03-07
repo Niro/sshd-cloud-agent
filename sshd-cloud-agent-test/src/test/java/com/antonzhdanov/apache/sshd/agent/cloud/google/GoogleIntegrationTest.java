@@ -8,7 +8,6 @@ import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.cloud.kms.v1.KeyManagementServiceSettings;
-import lombok.SneakyThrows;
 import org.testng.annotations.DataProvider;
 
 import java.io.ByteArrayInputStream;
@@ -40,12 +39,11 @@ public class GoogleIntegrationTest extends AbstractIntegrationTest<GoogleCloudKe
     }
 
     @Override
-    protected CloudSshAgentFactory<GoogleCloudKeyInfo> createCloudFactory() {
+    protected CloudSshAgentFactory<GoogleCloudKeyInfo> createCloudFactory() throws Exception {
         return SingleCloudSshAgentFactory.of(new GoogleCloudSshAgentProvider(createClient()));
     }
 
-    @SneakyThrows
-    public static KeyManagementServiceClient createClient() {
+    public static KeyManagementServiceClient createClient() throws Exception {
         InputStream creds = new ByteArrayInputStream(readEnv(GOOGLE_AUTH_JSON_ENV).getBytes());
         KeyManagementServiceSettings settings = KeyManagementServiceSettings.newBuilder()
                 .setCredentialsProvider(FixedCredentialsProvider.create(GoogleCredentials.fromStream(creds)))

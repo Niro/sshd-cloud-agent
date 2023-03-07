@@ -2,7 +2,6 @@ package com.antonzhdanov.apache.sshd.agent.cloud;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.key.JcaPublicKeyFactory;
 import com.antonzhdanov.apache.sshd.agent.cloud.key.PublicKeyFactory;
-import lombok.SneakyThrows;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,8 +17,7 @@ public class TestUtils {
         return requireNonNull(System.getenv(envVariableName), "Missing env variable " + envVariableName);
     }
 
-    @SneakyThrows
-    public static PublicKey readPublicKey(String fileName) {
+    public static PublicKey readPublicKey(String fileName) throws Exception {
         byte[] bytes = Files.readAllBytes(Paths.get(ClassLoader.getSystemResource(fileName).toURI()));
 
         return PUBLIC_KEY_FACTORY.create(new String(bytes));

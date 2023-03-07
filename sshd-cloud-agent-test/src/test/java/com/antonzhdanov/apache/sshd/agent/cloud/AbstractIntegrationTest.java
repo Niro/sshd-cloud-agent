@@ -18,10 +18,11 @@ public abstract class AbstractIntegrationTest<K extends CloudKeyInfo> {
     private static final String ECHO_STRING = String.valueOf(System.currentTimeMillis());
 
     private final SshClient sshClient = SshClient.setUpDefaultClient();
-    private final CloudSshAgentFactory<K> cloudFactory = createCloudFactory();
+    private CloudSshAgentFactory<K> cloudFactory;
 
     @BeforeClass
-    public void init() {
+    public void init() throws Exception {
+        cloudFactory = createCloudFactory();
         sshClient.setAgentFactory(cloudFactory);
         sshClient.start();
     }
@@ -51,5 +52,5 @@ public abstract class AbstractIntegrationTest<K extends CloudKeyInfo> {
 
     protected abstract Object[][] testData();
 
-    protected abstract CloudSshAgentFactory<K> createCloudFactory();
+    protected abstract CloudSshAgentFactory<K> createCloudFactory() throws Exception;
 }

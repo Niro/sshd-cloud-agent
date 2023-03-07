@@ -84,3 +84,7 @@ public class AuthExample {
     }
 }
 ```
+
+See also:
+* [MultiCloudIntegrationTest](sshd-cloud-agent-test%2Fsrc%2Ftest%2Fjava%2Fcom%2Fantonzhdanov%2Fapache%2Fsshd%2Fagent%2Fcloud%2FMultiCloudIntegrationTest.java)
+* [AbstractIntegrationTest](..%2Fsshd-cloud-agent-test%2Fsrc%2Ftest%2Fjava%2Fcom%2Fantonzhdanov%2Fapache%2Fsshd%2Fagent%2Fcloud%2FAbstractIntegrationTest.java)

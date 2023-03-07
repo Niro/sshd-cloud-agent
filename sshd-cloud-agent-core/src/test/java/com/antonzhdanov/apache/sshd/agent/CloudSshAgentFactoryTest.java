@@ -1,7 +1,6 @@
 package com.antonzhdanov.apache.sshd.agent;
 
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
-import lombok.SneakyThrows;
 import org.apache.sshd.agent.SshAgent;
 import org.apache.sshd.common.FactoryManager;
 import org.apache.sshd.common.channel.ChannelFactory;
@@ -80,7 +79,7 @@ public class CloudSshAgentFactoryTest {
         verifyNoMoreInteractions(sshAgentProvider);
     }
 
-    public void testThatSessionRemoved() {
+    public void testThatSessionRemoved()  throws Exception {
         // GIVEN
         Session session = mock(Session.class);
         CloudKeyInfo cloudKeyInfo = mock(CloudKeyInfo.class);
@@ -97,8 +96,7 @@ public class CloudSshAgentFactoryTest {
         assertFalse(keyInfosPerSession.containsKey(session));
     }
 
-    @SneakyThrows
-    public <T> T getFieldValue(Object object, String fieldName) {
+    public <T> T getFieldValue(Object object, String fieldName) throws Exception {
         Field field = object.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         Object value = field.get(object);
