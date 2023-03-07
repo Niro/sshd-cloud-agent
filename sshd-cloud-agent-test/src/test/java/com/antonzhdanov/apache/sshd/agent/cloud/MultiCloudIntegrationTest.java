@@ -47,7 +47,7 @@ public class MultiCloudIntegrationTest extends AbstractIntegrationTest<CloudKeyI
         return MultiCloudSshAgentFactory.of(
                 Arrays.asList(
                         new AzureCloudSshAgentProvider(AzureIntegrationTest::createCryptographyClient),
-//                        new AwsCloudSshAgentProvider(AwsIntegrationTest.createKmsClient()),
+                        new AwsCloudSshAgentProvider(AwsIntegrationTest.createKmsClient()),
                         new GoogleCloudSshAgentProvider(GoogleIntegrationTest.createClient())
                 )
         );
