@@ -1,0 +1,5 @@
+build:
+  environment:
+    sdkman:
+      - java@11.0.18-tem
+      - maven
