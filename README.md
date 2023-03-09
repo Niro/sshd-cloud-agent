@@ -1,5 +1,5 @@
 # Apache SSHD Cloud Agent
-![latest version](https://img.shields.io/maven-central/v/com.antonzhdanov/sshd-cloud-agent)
+[<img src="https://img.shields.io/maven-central/v/com.antonzhdanov/sshd-cloud-agent"/>](https://central.sonatype.com/artifact/com.antonzhdanov/sshd-cloud-agent-core/1.0.1/dependents)
 
 SSHD extension for client auth using SSH Key from cloud
 
