@@ -29,6 +29,8 @@ public class OpenSshServerContainer extends GenericContainer<OpenSshServerContai
         addExposedPort(2222);
 
         waitingFor(new HostPortWaitStrategy());
+
+        start();
     }
 
     private String encode(PublicKey publicKey) {

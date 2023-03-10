@@ -60,7 +60,8 @@ public class AuthExample {
                 .verify(Duration.ofSeconds(5)).getSession()) {
             
             // Tell CloudSshAgentFactory that you are going to authorize with awsKmsManagedKeyInfo within session
-            // CloudSshAgentFactory#withKeyInfo returns AutoCloseable. Use it to clear useless data after auth
+            // CloudSshAgentFactory#withKeyInfo returns AutoCloseable.
+            // Use it to clear association between session and awsKmsManagedKeyInfo
             try (var unused = agentFactory.withKeyInfo(session, awsKmsManagedKeyInfo)) {
                 session.auth().verify(Duration.ofSeconds(10));
             }

@@ -7,6 +7,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.security.PublicKey;
 import java.time.Duration;
 
 import static com.antonzhdanov.apache.sshd.agent.cloud.TestUtils.readPublicKey;
@@ -33,9 +34,17 @@ public abstract class AbstractIntegrationTest<K extends CloudKeyInfo> {
     }
 
     @Test(dataProvider = "testData")
-    public void testAuthSucceeded(String publicKey, K keyInfo) throws Exception {
-        try (OpenSshServerContainer container = new OpenSshServerContainer(readPublicKey(publicKey))) {
-            container.start();
+    public void testAuthSucceeded(Object publicKeyObj, K keyInfo) throws Exception {
+        PublicKey publicKey;
+        if (publicKeyObj instanceof PublicKey) {
+            publicKey = (PublicKey) publicKeyObj;
+        } else if (publicKeyObj instanceof String){
+            publicKey = readPublicKey((String) publicKeyObj);
+        } else {
+            throw new RuntimeException("Unknown argument type " + publicKeyObj.getClass().getName());
+        }
+
+        try (OpenSshServerContainer container = new OpenSshServerContainer(publicKey)) {
             assertTrue(container.isRunning(), "Open SSH Server container did not start");
 
             try (ClientSession session = sshClient.connect("user", "localhost", container.getFirstMappedPort())

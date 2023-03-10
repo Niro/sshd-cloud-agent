@@ -49,6 +49,7 @@
         <module>sshd-cloud-agent-aws</module>
         <module>sshd-cloud-agent-google</module>
         <module>sshd-cloud-agent-azure</module>
+        <module>sshd-cloud-agent-vault-transit</module>
     </modules>
 
     <properties>

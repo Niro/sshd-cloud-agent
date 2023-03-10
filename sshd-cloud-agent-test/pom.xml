@@ -40,6 +40,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.antonzhdanov</groupId>
+            <artifactId>sshd-cloud-agent-vault-transit</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>vault</artifactId>
+            <version>1.17.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>kms</artifactId>
             <scope>test</scope>

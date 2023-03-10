@@ -10,6 +10,9 @@ import com.antonzhdanov.apache.sshd.agent.cloud.azure.AzureCloudSshAgentProvider
 import com.antonzhdanov.apache.sshd.agent.cloud.azure.AzureIntegrationTest;
 import com.antonzhdanov.apache.sshd.agent.cloud.google.GoogleCloudSshAgentProvider;
 import com.antonzhdanov.apache.sshd.agent.cloud.google.GoogleIntegrationTest;
+import com.antonzhdanov.apache.sshd.agent.cloud.vault.transit.VaultTransitCloudSshAgentProvider;
+import com.antonzhdanov.apache.sshd.agent.cloud.vault.transit.VaultTransitIntegrationTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 
 import java.util.Arrays;
@@ -21,10 +24,23 @@ import static com.antonzhdanov.apache.sshd.agent.cloud.signature.BuiltInSignatur
 import static com.antonzhdanov.apache.sshd.agent.cloud.signature.BuiltInSignatureAlgorithm.RSA_PCKS1_V15_SHA512;
 
 public class MultiCloudIntegrationTest extends AbstractIntegrationTest<CloudKeyInfo> {
+
+    private final VaultTransitIntegrationTest vaultTransitIntegrationTest = new VaultTransitIntegrationTest(false);
+
+    @BeforeClass
+    @Override
+    public void init() throws Exception {
+        vaultTransitIntegrationTest.init();
+
+        super.init();
+    }
+
     @Override
     @DataProvider(parallel = true)
     protected Object[][] testData() {
-        return new Object[][] {
+        Object[][] vaultData = vaultTransitIntegrationTest.testData();
+
+        Object[][] allData = {
                 {"aws/RSA-2048.pub", new AwsCloudKeyInfo("ecde8af1-4f4b-4ccd-be36-7a8b4409b23f")},
                 {"aws/ECC_NIST_P256.pub", new AwsCloudKeyInfo("f827f37f-79ff-44ca-aa0c-843722df8d46")},
                 {"azure/RSA-2048.pub", new AzureCloudKeyInfo("https://sshd-cloud-agent-test.vault.azure.net/keys/RSA-2048/00326446c4ac4276be224f0a40665295")},
@@ -40,6 +56,11 @@ public class MultiCloudIntegrationTest extends AbstractIntegrationTest<CloudKeyI
                 {"google/ECDSA-256.pub", createKeyInfo("ECDSA-256", ECDSA_SHA_256)},
                 {"google/ECDSA-384.pub", createKeyInfo("ECDSA-384", ECDSA_SHA_384)}
         };
+
+        Object[][] result = Arrays.copyOf(vaultData, vaultData.length + allData.length);
+        System.arraycopy(allData, 0, result, vaultData.length, allData.length);
+
+        return result;
     }
 
     @Override
@@ -48,7 +69,8 @@ public class MultiCloudIntegrationTest extends AbstractIntegrationTest<CloudKeyI
                 Arrays.asList(
                         new AzureCloudSshAgentProvider(AzureIntegrationTest::createCryptographyClient),
                         new AwsCloudSshAgentProvider(AwsIntegrationTest.createKmsClient()),
-                        new GoogleCloudSshAgentProvider(GoogleIntegrationTest.createClient())
+                        new GoogleCloudSshAgentProvider(GoogleIntegrationTest.createClient()),
+                        new VaultTransitCloudSshAgentProvider(vaultTransitIntegrationTest.getTestVaultTransitClient())
                 )
         );
     }
