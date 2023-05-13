@@ -7,6 +7,8 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.keys.cryptography.CryptographyClient;
 import com.azure.security.keyvault.keys.cryptography.CryptographyClientBuilder;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Ignore;
+import org.testng.annotations.Test;
 
 public class AzureIntegrationTest extends AbstractIntegrationTest<AzureCloudKeyInfo> {
     @Override
@@ -20,6 +22,11 @@ public class AzureIntegrationTest extends AbstractIntegrationTest<AzureCloudKeyI
                 {"azure/EC-P384.pub", new AzureCloudKeyInfo("https://sshd-cloud-agent-test.vault.azure.net/keys/EC-P384/331ff303c2c043569e198b116e00788f")},
                 {"azure/EC-P521.pub", new AzureCloudKeyInfo("https://sshd-cloud-agent-test.vault.azure.net/keys/EC-P521/1f88fc6e10b04e9c9b3f98fc619742da")}
         };
+    }
+
+    @Override
+    public void testAuthSucceeded(Object publicKeyObj, AzureCloudKeyInfo keyInfo) throws Exception {
+        // Azure free period expired
     }
 
     @Override

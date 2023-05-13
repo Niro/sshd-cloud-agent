@@ -1,6 +1,6 @@
 package com.antonzhdanov.apache.sshd.agent.cloud.google;
 
-import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
+import com.antonzhdanov.apache.sshd.agent.cloud.AbstractCloudKeyInfo;
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudProvider;
 import com.antonzhdanov.apache.sshd.agent.cloud.exception.CloudSshAgentException;
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignatureAlgorithm;
@@ -12,14 +12,14 @@ import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
-public class GoogleCloudKeyInfo implements CloudKeyInfo {
+public class GoogleCloudKeyInfo extends AbstractCloudKeyInfo {
 
     private static final Pattern RESOURCE_NAME_PATTERN = Pattern.compile("^projects/(?<project>\\S+)" +
             "/locations/(?<location>\\S+)" +
             "/keyRings/(?<keyRing>\\S+)" +
             "/cryptoKeys/(?<cryptoKey>\\S+)" +
             "/cryptoKeyVersions/(?<cryptoKeyVersion>\\S+)$");
-    private static final String KEY_COMMENT_FORMAT = "Google projects/%s/locations/%s/keyRings/%s/cryptoKeys/%s/cryptoKeyVersions/%s";
+    private static final String KEY_ID_FORMAT = "Google projects/%s/locations/%s/keyRings/%s/cryptoKeys/%s/cryptoKeyVersions/%s";
 
     private final String project;
     private final String location;
@@ -28,12 +28,25 @@ public class GoogleCloudKeyInfo implements CloudKeyInfo {
     private final String cryptoKeyVersion;
     private final SignatureAlgorithm signatureAlgorithm;
 
-    public GoogleCloudKeyInfo(String project, String location, String keyRing, String cryptoKey, String cryptoKeyVersion, SignatureAlgorithm signatureAlgorithm) {
-        this.project = requireNonNull(project, "project");
-        this.location = requireNonNull(location, "location");
-        this.keyRing = requireNonNull(keyRing, "keyRing");
-        this.cryptoKey = requireNonNull(cryptoKey, "cryptoKey");
-        this.cryptoKeyVersion = requireNonNull(cryptoKeyVersion, "cryptoKeyVersion");
+    public GoogleCloudKeyInfo(String project,
+                              String location,
+                              String keyRing,
+                              String cryptoKey,
+                              String cryptoKeyVersion,
+                              SignatureAlgorithm signatureAlgorithm) {
+        super(String.format(KEY_ID_FORMAT,
+                requireNonNull(project, "project"),
+                requireNonNull(location, "location"),
+                requireNonNull(keyRing, "keyRing"),
+                requireNonNull(cryptoKey, "cryptoKey"),
+                requireNonNull(cryptoKeyVersion, "cryptoKeyVersion")
+        ));
+
+        this.project = project;
+        this.location = location;
+        this.keyRing = keyRing;
+        this.cryptoKey = cryptoKey;
+        this.cryptoKeyVersion = cryptoKeyVersion;
         this.signatureAlgorithm = requireNonNull(signatureAlgorithm, "signatureAlgorithm");
     }
 
@@ -56,7 +69,7 @@ public class GoogleCloudKeyInfo implements CloudKeyInfo {
 
     @Override
     public String getComment() {
-        return String.format(KEY_COMMENT_FORMAT, project, location, keyRing, cryptoKey, cryptoKeyVersion);
+        return String.format(KEY_ID_FORMAT, project, location, keyRing, cryptoKey, cryptoKeyVersion);
     }
 
     public String getProject() {
@@ -90,35 +103,6 @@ public class GoogleCloudKeyInfo implements CloudKeyInfo {
 
     public CryptoKeyVersionName toCryptoKeyVersionName() {
         return CryptoKeyVersionName.of(getProject(), getLocation(), getKeyRing(), getCryptoKey(), getCryptoKeyVersion());
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-
-        GoogleCloudKeyInfo that = (GoogleCloudKeyInfo) obj;
-        return project.equals(that.project) &&
-                location.equals(that.location) &&
-                keyRing.equals(that.keyRing) &&
-                cryptoKey.equals(that.cryptoKey) &&
-                cryptoKeyVersion.equals(that.cryptoKeyVersion) &&
-                signatureAlgorithm.equals(that.signatureAlgorithm);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(project, location, keyRing, cryptoKey, cryptoKeyVersion, signatureAlgorithm);
-    }
-
-    @Override
-    public String toString() {
-        return getComment();
     }
 
     public static Builder builder() {
