@@ -4,7 +4,7 @@
 
     <groupId>com.antonzhdanov</groupId>
     <artifactId>sshd-cloud-agent</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>pom</packaging>
 
     <name>SSHD Cloud Agent</name>
@@ -49,6 +49,7 @@
         <module>sshd-cloud-agent-aws</module>
         <module>sshd-cloud-agent-google</module>
         <module>sshd-cloud-agent-azure</module>
+        <module>sshd-cloud-agent-oracle</module>
     </modules>
 
     <properties>
@@ -65,6 +66,8 @@
         <azure.version>1.2.10</azure.version>
         <testng.version>7.6.1</testng.version>
         <mockito.version>5.1.1</mockito.version>
+        <oci.version>3.13.1</oci.version>
+        <spring-vault.version>2.3.3</spring-vault.version>
     </properties>
 
     <dependencyManagement>
@@ -115,6 +118,16 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.oracle.oci.sdk</groupId>
+                <artifactId>oci-java-sdk-keymanagement</artifactId>
+                <version>${oci.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.vault</groupId>
+                <artifactId>spring-vault-core</artifactId>
+                <version>${spring-vault.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

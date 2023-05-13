@@ -9,10 +9,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>sshd-cloud-agent-aws</artifactId>
+    <artifactId>sshd-cloud-agent-oracle</artifactId>
 
-    <name>SSHD Cloud Agent - AWS Implementation</name>
-    <description>AWS Implementation</description>
+    <name>SSHD Cloud Agent - Oracle Implementation</name>
+    <description>Oracle Cloud Implementation</description>
 
     <dependencies>
         <dependency>
@@ -26,8 +26,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>kms</artifactId>
+            <groupId>com.oracle.oci.sdk</groupId>
+            <artifactId>oci-java-sdk-keymanagement</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -42,4 +42,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>
