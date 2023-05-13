@@ -5,9 +5,9 @@ name: CI
 # Controls when the workflow will run
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -35,4 +35,11 @@ jobs:
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ORACLE_TENANT_ID: ${{ secrets.ORACLE_TENANT_ID }}
+          ORACLE_USER_ID: ${{ secrets.ORACLE_USER_ID }}
+          ORACLE_FINGERPRINT: ${{ secrets.ORACLE_FINGERPRINT }}
+          ORACLE_REGION: ${{ secrets.ORACLE_REGION }}
+          ORACLE_PRIVATE_KEY: ${{ secrets.ORACLE_PRIVATE_KEY }}
+          ORACLE_MANAGEMENT_ENDPOINT: ${{ secrets.ORACLE_MANAGEMENT_ENDPOINT }}
+          ORACLE_CRYPTO_ENDPOINT: ${{ secrets.ORACLE_CRYPTO_ENDPOINT }}
         run: mvn --batch-mode --update-snapshots -P IT verify
