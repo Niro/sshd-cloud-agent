@@ -8,9 +8,7 @@ SSHD extension for client auth using SSH Key from cloud
 - [x] Amazon
 - [x] Google
 - [x] Azure
-- [ ] Yandex - no API for asymmetric sign?
-- [ ] Alibaba
-- [ ] Tencent Cloud
+- [x] Oracle
 
 ## Single Cloud Provider
 ### AWS
@@ -21,6 +19,9 @@ Refer to [sshd-cloud-agent-azure/README.md](sshd-cloud-agent-azure%2FREADME.md)
 
 ### Google
 Refer to [sshd-cloud-agent-google/README.md](sshd-cloud-agent-google%2FREADME.md)
+
+### Oracle
+Refer to [sshd-cloud-agent-oracle/README.md](sshd-cloud-agent-oracle%2FREADME.md)
 
 ## Multiple Cloud Providers
 
