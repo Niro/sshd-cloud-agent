@@ -42,4 +42,4 @@ jobs:
           ORACLE_PRIVATE_KEY: ${{ secrets.ORACLE_PRIVATE_KEY }}
           ORACLE_MANAGEMENT_ENDPOINT: ${{ secrets.ORACLE_MANAGEMENT_ENDPOINT }}
           ORACLE_CRYPTO_ENDPOINT: ${{ secrets.ORACLE_CRYPTO_ENDPOINT }}
-        run: mvn --batch-mode --update-snapshots -P IT verify
+        run: mvn --batch-mode --update-snapshots verify

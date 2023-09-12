@@ -8,8 +8,6 @@ import com.oracle.bmc.keymanagement.model.SignDataDetails;
 import com.oracle.bmc.keymanagement.requests.SignRequest;
 import com.oracle.bmc.keymanagement.responses.SignResponse;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class OracleSigner extends AbstractSigner<OracleCloudKeyInfo> {

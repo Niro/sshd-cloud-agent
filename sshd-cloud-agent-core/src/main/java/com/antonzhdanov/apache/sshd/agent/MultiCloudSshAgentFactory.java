@@ -4,14 +4,12 @@ import com.antonzhdanov.apache.sshd.agent.cloud.CloudKeyInfo;
 import com.antonzhdanov.apache.sshd.agent.cloud.CloudProvider;
 import com.antonzhdanov.apache.sshd.agent.cloud.exception.CloudSshAgentException;
 import org.apache.sshd.agent.SshAgent;
-import org.apache.sshd.agent.SshAgentFactory;
 import org.apache.sshd.agent.SshAgentServer;
 import org.apache.sshd.common.FactoryManager;
 import org.apache.sshd.common.channel.ChannelFactory;
 import org.apache.sshd.common.session.ConnectionService;
 import org.apache.sshd.common.session.Session;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

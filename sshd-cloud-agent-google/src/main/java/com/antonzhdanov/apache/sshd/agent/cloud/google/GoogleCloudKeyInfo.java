@@ -6,7 +6,6 @@ import com.antonzhdanov.apache.sshd.agent.cloud.exception.CloudSshAgentException
 import com.antonzhdanov.apache.sshd.agent.cloud.signature.SignatureAlgorithm;
 import com.google.cloud.kms.v1.CryptoKeyVersionName;
 
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
